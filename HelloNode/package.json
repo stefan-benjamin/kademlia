@@ -1,0 +1,13 @@
+{
+  "name": "hello-node",
+  "version": "0.0.0",
+  "description": "HelloNode",
+  "main": "app.js",
+  "author": {
+    "name": "stefa"
+  },
+  "dependencies": {
+    "express": "^4.15.4",
+    "node-rest-client": "^3.1.0"
+  }
+}
