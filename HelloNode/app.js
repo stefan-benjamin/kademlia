@@ -39,9 +39,19 @@ app.get('/', function (req, res) {
 app.get('/ping', function (req, res) {
 
    var senderId = req.query.senderId;
-   console.log('Ping received from ' + senderId );
+   console.log('Ping received from ' + senderId);
+   
+   res.send({ type: "PONG", senderId: senderId, nodeID: nodeId });
+});
 
-   res.send({ type: "PONG", senderId: senderId, nodeID: nodeIdString });
+app.get('/findnode', function (req, res) {
+
+   var senderId = req.query.senderId;
+   var targetNodeId = req.query.targetNodeId;
+
+   console.log('Findnode received from ' + senderId);
+
+   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, results: null });
 });
 
 
