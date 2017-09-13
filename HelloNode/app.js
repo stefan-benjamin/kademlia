@@ -6,10 +6,16 @@ var constants = require('./constants');
 var utils = require('./utils');
 var bucket = require('./bucket');
 
-var portNumber = 8080; //default value, used when debugging in VS.
+//Default value, used when debugging in VS.
+var portNumber = 8080; 
+var initialNodeIpAddress = 'localhost';
+var initialNodePortNumber = portNumber;
 
-if (process.argv[2]) {
+
+if (process.argv[2] && process.argv[3] && process.argv[4]) {
    portNumber = process.argv[2];
+   initialNodeIpAddress = process.argv[3];
+   initialNodePortNumber = process.argv[4];
 }
 
 var addresses = utils.getIpAddresses();
@@ -39,7 +45,7 @@ app.set('view engine', 'pug');
 app.get('/', function (req, res) {
    console.log(app.mountpath);
    //res.send('App Homepage');
-   res.render('index', {test:1});
+   res.render('index', { NodeId: nodeId, IpAddresses: addresses, LocalPort: portNumber, InitialNodeIp: initialNodeIpAddress, InitialNodePort: initialNodePortNumber });
 });
 
 app.get('/ping', function (req, res) {

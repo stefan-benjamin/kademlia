@@ -1,6 +1,16 @@
 ﻿doctype html
 html
   head
-    title This is IOT!
+    title Node: #{NodeId}
   body
-    h1= test
+    h1 Node Id: #{NodeId}
+    h2 Listening port: #{LocalPort}
+    h3 Initial node IP: #{InitialNodeIp}
+    h3 Initial node port: #{InitialNodePort}
+    h2 Network IP:
+        ul
+            each val in IpAddresses
+                li= val
+    
+
+    h2 Buckets:
