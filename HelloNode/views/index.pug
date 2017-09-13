@@ -1,16 +1,22 @@
 ﻿doctype html
 html
   head
-    title Node: #{NodeId}
+    title Node: #{nodeId}
   body
-    h1 Node Id: #{NodeId}
-    h2 Listening port: #{LocalPort}
-    h3 Initial node IP: #{InitialNodeIp}
-    h3 Initial node port: #{InitialNodePort}
-    h2 Network IP:
+    h1 Node Id: #{nodeId}
+    h2 Listening port: #{localPort}
+    h3 Initial node IP: #{initialNodeIp}
+    h3 Initial node port: #{initialNodePort}
+    h2 Network IP (#{ipAddresses.length}):
         ul
-            each val in IpAddresses
+            each val in ipAddresses
                 li= val
     
 
-    h2 Buckets:
+    h2 Buckets (#{buckets.length}):
+        ul
+            each bucket in buckets
+                li Bucket with #{bucket.length} nodes.
+                ul
+                    each node in bucket
+                        li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}

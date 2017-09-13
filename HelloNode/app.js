@@ -38,6 +38,9 @@ var nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
 console.log("Node id: " + nodeId);
 
+//Create a BucketManager
+var bm = new bucketmanager(nodeId);
+
 // view engine setup
 var path = require('path');
 app.set('views', path.join(__dirname, 'views'));
@@ -46,13 +49,21 @@ app.set('view engine', 'pug');
 app.get('/', function (req, res) {
    console.log(app.mountpath);
    //res.send('App Homepage');
-   res.render('index', { NodeId: nodeId, IpAddresses: addresses, LocalPort: portNumber, InitialNodeIp: initialNodeIpAddress, InitialNodePort: initialNodePortNumber });
+   var buckets = bm.getBuckets();
+
+   res.render('index', { nodeId: nodeId, ipAddresses: addresses, localPort: portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: initialNodePortNumber, buckets: buckets });
 });
 
 app.get('/ping', function (req, res) {
 
    var senderId = req.query.senderId;
+   
+   //var senderIpAddress = req.query.senderIpAddress; 
+   var senderPort = req.query.senderPort;
+
    console.log('Ping received from ' + senderId);
+
+   //update buckets - insert the senderId -
    
    res.send({ type: "PONG", senderId: senderId, nodeId: nodeId });
 });
@@ -67,7 +78,6 @@ app.get('/findnode', function (req, res) {
    res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: nodeId, results: null });
 });
 
-
 // Get distance between this node and another random node
 nodeIdCrypto = crypto.createHash('sha1');
 nodeIdCrypto.update("RANDOM 2");
@@ -77,8 +87,7 @@ console.log("Random node Id: " + randomNodeId);
 
 console.log(utils.getDistance(nodeId, randomNodeId));
 
-//Create a new bucket
-var b = new bucket();
+bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
 console.log("Created a new bucket");

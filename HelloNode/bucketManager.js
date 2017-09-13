@@ -8,7 +8,6 @@ class BucketManager {
 
     constructor(pCurrentNodeId) {
         this.buckets = new Map();
-        this.buckets.values()
         this.currentNodeId = pCurrentNodeId;
     }
 
@@ -30,12 +29,14 @@ class BucketManager {
         var appropriateBucket = this._selectBucket(nodeId);
 
         if (this.buckets.has(appropriateBucket)) {
-            this.buckets.get(appropriateBucket).set(nodeId, contact);
+            
         }
         else {
             var tempBucket = new bucket();
             this.buckets.set(appropriateBucket, tempBucket);
         }
+
+        this.buckets.get(appropriateBucket).set(nodeId, contact);
     }
 
     getClosestNodes(nodeId) {
@@ -43,6 +44,27 @@ class BucketManager {
 
         var bucketNumber = Math.floor(Math.log2(distanceFromMeToTargetNode));
 
+    }
+
+    getBuckets() {
+       var result = [];
+       //iterate through the buckets
+       this.buckets.forEach(function (value, key, map) {
+          var bucketNodesArray = [];
+          value.forEach(function (value, key, map) {
+
+             var nodeInfo = {};
+             nodeInfo.nodeId = key;
+             nodeInfo.ipAddress = value.ip;
+             nodeInfo.port = value.port;
+
+             bucketNodesArray.push(nodeInfo);
+          })
+
+          result.push(bucketNodesArray);
+       })
+
+       return result;
     }
 
 
