@@ -4,6 +4,7 @@ console.log('Starting node...');
 
 var constants = require('./constants');
 var utils = require('./utils');
+var bucket = require('./bucket');
 
 var portNumber = 8080; //default value, used when debugging in VS.
 
@@ -24,10 +25,11 @@ app.listen(portNumber);
 console.log("Listening on port " + portNumber);
 
 var crypto = require('crypto');
-var nodeId = crypto.createHash('sha1');
-nodeId.update(addresses + portNumber);
-var nodeIdString = nodeId.digest("hex").substr(0, constants.B);
-console.log("Node has Id: " + nodeIdString);
+var nodeIdCrypto = crypto.createHash('sha1');
+nodeIdCrypto.update(addresses + portNumber);
+var nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+
+console.log("Node id: " + nodeId);
 
 app.get('/', function (req, res) {
    console.log(app.mountpath);
@@ -41,6 +43,23 @@ app.get('/ping', function (req, res) {
 
    res.send({ type: "PONG", senderId: senderId, nodeID: nodeIdString });
 });
+
+
+// Get distance between this node and another random node
+nodeIdCrypto = crypto.createHash('sha1');
+nodeIdCrypto.update("RANDOM 2");
+var randomNodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+
+console.log("Random node Id: " + randomNodeId);
+
+console.log(utils.getDistance(nodeId, randomNodeId));
+
+//Create a new bucket
+var b = new bucket();
+b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
+console.log("Created a new bucket");
+
+
 
 //restClient.get("http://google.com", function (data, response) {
 //   // parsed response body as js object 
