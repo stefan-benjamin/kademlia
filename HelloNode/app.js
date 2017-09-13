@@ -41,7 +41,7 @@ app.get('/ping', function (req, res) {
    var senderId = req.query.senderId;
    console.log('Ping received from ' + senderId);
    
-   res.send({ type: "PONG", senderId: senderId, nodeID: nodeId });
+   res.send({ type: "PONG", senderId: senderId, nodeId: nodeId });
 });
 
 app.get('/findnode', function (req, res) {
@@ -51,7 +51,7 @@ app.get('/findnode', function (req, res) {
 
    console.log('Findnode received from ' + senderId);
 
-   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, results: null });
+   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: nodeId, results: null });
 });
 
 
