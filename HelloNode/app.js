@@ -31,9 +31,15 @@ var nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
 console.log("Node id: " + nodeId);
 
+// view engine setup
+var path = require('path');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
 app.get('/', function (req, res) {
    console.log(app.mountpath);
-   res.send('App Homepage');
+   //res.send('App Homepage');
+   res.render('index', {test:1});
 });
 
 app.get('/ping', function (req, res) {
