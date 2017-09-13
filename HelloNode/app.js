@@ -89,7 +89,7 @@ console.log(utils.getDistance(nodeId, randomNodeId));
 
 bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
-b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
+//b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
 console.log("Created a new bucket");
 
 //Create a BucketManager
