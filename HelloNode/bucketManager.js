@@ -38,7 +38,10 @@ class BucketManager {
         }
     }
 
-    getClosestNodes() {
+    getClosestNodes(nodeId) {
+        var distanceFromMeToTargetNode = utils.getDistance(nodeId, this.currentNodeId);
+
+        var bucketNumber = Math.floor(Math.log2(distanceFromMeToTargetNode));
 
     }
 

@@ -85,7 +85,9 @@ console.log("Created a new bucket");
 
 //Create a BucketManager
 var bm = new bucketmanager(nodeId);
-bm.receiveNode(randomNodeId, {ip:'192.168.2.1', port: 8080});
+bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
+
+bm.getClosestNodes(randomNodeId);
 
 //restClient.get("http://google.com", function (data, response) {
 //   // parsed response body as js object 
