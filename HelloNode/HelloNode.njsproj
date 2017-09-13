@@ -32,6 +32,9 @@
     <Compile Include="bucket.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="bucketManager.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="constants.js">
       <SubType>Code</SubType>
     </Compile>

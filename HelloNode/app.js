@@ -5,6 +5,7 @@ console.log('Starting node...');
 var constants = require('./constants');
 var utils = require('./utils');
 var bucket = require('./bucket');
+var bucketmanager = require('./bucketManager');
 
 var portNumber = 8080; //default value, used when debugging in VS.
 
@@ -72,10 +73,13 @@ console.log(utils.getDistance(nodeId, randomNodeId));
 
 //Create a new bucket
 var b = new bucket();
+
 b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
 console.log("Created a new bucket");
 
-
+//Create a BucketManager
+var bm = new bucketmanager(nodeId);
+bm.receiveNode(randomNodeId, {ip:'192.168.2.1', port: 8080});
 
 //restClient.get("http://google.com", function (data, response) {
 //   // parsed response body as js object 
