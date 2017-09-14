@@ -57,13 +57,13 @@ app.get('/', function (req, res) {
 app.get('/ping', function (req, res) {
 
    var senderId = req.query.senderId;
-   
-   //var senderIpAddress = req.query.senderIpAddress; 
    var senderPort = req.query.senderPort;
+   //The IP address of the sender needs to be retrieved from the query itself.
+   var senderIpAddress = req.connection.remoteAddress;
 
-   console.log('Ping received from ' + senderId);
+   console.log('Ping received from ' + senderId + ', having IP: ' + senderIpAddress);
 
-   //update buckets - insert the senderId -
+   //update buckets - insert the senderId
    
    res.send({ type: "PONG", senderId: senderId, nodeId: nodeId });
 });
