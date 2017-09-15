@@ -15,9 +15,9 @@ if (process.argv[2] && process.argv[3] && process.argv[4]) {
    globals.initialNodePortNumber = process.argv[4];
 }
 
-var addresses = utils.getIpAddresses();
+globals.ipAddresses = utils.getIpAddresses();
 
-console.log("IP addresses: " + addresses );
+console.log("IP addresses: " + globals.ipAddresses );
 
 var express = require('express');
 const bodyParser = require('body-parser');
@@ -30,7 +30,7 @@ console.log("Listening on port " + globals.portNumber);
 
 var crypto = require('crypto');
 var nodeIdCrypto = crypto.createHash('sha1');
-nodeIdCrypto.update(addresses + globals.portNumber);
+nodeIdCrypto.update(globals.ipAddresses + globals.portNumber);
 globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
 console.log("Node id: " + globals.nodeId);
@@ -48,7 +48,7 @@ app.get('/', function (req, res) {
    //res.send('App Homepage');
    var buckets = bm.getBuckets();
 
-   res.render('index', { nodeId: globals.nodeId, ipAddresses: addresses, localPort: globals.portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
+   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
 });
 
 app.post('/api/ping', function (req, res) {

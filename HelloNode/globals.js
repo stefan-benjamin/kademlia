@@ -4,5 +4,6 @@
    portNumber : 8080,
    initialNodeIpAddress : 'localhost',
    initialNodePortNumber: 8080,
-   nodeId : null
+   nodeId: null,
+   ipAddresses: null,
 }
