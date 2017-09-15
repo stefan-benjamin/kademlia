@@ -11,7 +11,11 @@ html
         ul
             each val in ipAddresses
                 li= val
-    
+  
+    form(action='/ping' method='POST')
+        |Node Id: 
+        input(type='text', name='nodeId') 
+        input(type='submit', value='Ping')
 
     h2 Buckets (#{buckets.length}):
         ul
@@ -19,4 +23,5 @@ html
                 li Bucket with #{bucket.nodes.length} nodes, key #{bucket.key}.
                 ul
                     each node in bucket.nodes
-                        li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}
+                        li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}  
+                            a(href='http://' + node.ipAddress + ':' + node.port) Go to node
