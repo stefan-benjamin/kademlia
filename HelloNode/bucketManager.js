@@ -9,10 +9,15 @@ class BucketManager {
 
     constructor() {
         this.buckets = new Map();
+        this.DISTANCE_IS_ZERO = 1001;
     }
 
     _selectBucket(contactId) {
        var distance = utils.getDistance(globals.nodeId, contactId);
+
+       if (distance <= 0) {
+           return this.DISTANCE_IS_ZERO;
+       }
 
         var x = 0;
         while (true) {
@@ -25,8 +30,17 @@ class BucketManager {
         return x;
     }
 
+    _getKNodesFromNeighbourBuckets(bucketIndex) {
+
+    }
+
     receiveNode(nodeId, contact) {
         var appropriateBucket = this._selectBucket(nodeId);
+
+        if (appropriateBucket === this.DISTANCE_IS_ZERO) {
+            console.log("ERROR: Couldn't add myself as node to a bucket.");
+            return false;
+        }
 
         if (!this.buckets.has(appropriateBucket)) {
            var tempBucket = new bucket();
@@ -37,9 +51,24 @@ class BucketManager {
     }
 
     getClosestNodes(nodeId) {
-       var distanceFromMeToTargetNode = utils.getDistance(nodeId, globals.nodeId);
+        var distanceFromMeToTargetNode = utils.getDistance(nodeId, globals.nodeId);
+        var bucketIndex = Math.floor(Math.log2(distanceFromMeToTargetNode));
 
-        var bucketNumber = Math.floor(Math.log2(distanceFromMeToTargetNode));
+        var result = {};
+
+        result.bucket = this.buckets.get(bucketIndex);
+
+        
+
+        //if (this.buckets.has(bucketIndex)) {
+        //    result.bucket = this.buckets.get(bucketIndex);
+        //}
+        //else {
+        //    var freshBucket = new bucket();
+
+        //}
+
+        return result;
 
     }
 
