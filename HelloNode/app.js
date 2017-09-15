@@ -24,7 +24,10 @@ var addresses = utils.getIpAddresses();
 console.log("IP addresses: " + addresses );
 
 var express = require('express');
+const bodyParser = require('body-parser');
 var app = express(); // the main app
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 
 var RestClient = require('node-rest-client').Client;
 var restClient = new RestClient();
@@ -54,21 +57,21 @@ app.get('/', function (req, res) {
    res.render('index', { nodeId: nodeId, ipAddresses: addresses, localPort: portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: initialNodePortNumber, buckets: buckets });
 });
 
-app.get('/ping', function (req, res) {
+app.post('/api/ping', function (req, res) {
 
-   var senderId = req.query.senderId;
-   var senderPort = req.query.senderPort;
+   var senderId = req.body.senderId;
+   var senderPort = req.body.senderPort;
    //The IP address of the sender needs to be retrieved from the query itself.
    var senderIpAddress = req.connection.remoteAddress;
-
+   
    console.log('Ping received from ' + senderId + ', having IP: ' + senderIpAddress);
 
    //update buckets - insert the senderId
    
-   res.send({ type: "PONG", senderId: senderId, nodeId: nodeId });
+   res.send({ senderId: senderId, nodeId: nodeId });
 });
 
-app.get('/findnode', function (req, res) {
+app.get('/api/findnode', function (req, res) {
 
    var senderId = req.query.senderId;
    var targetNodeId = req.query.targetNodeId;
@@ -98,12 +101,18 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 bm.getClosestNodes(randomNodeId);
 
-//restClient.get("http://google.com", function (data, response) {
-//   // parsed response body as js object 
-//   console.log(data);
-//   // raw response 
-//   console.log(response);
-//});
+var args = {
+   data: { senderId: nodeId, senderPort: portNumber },
+   headers: { "Content-Type": "application/json" }
+};
+
+// When we start, make a ping to the other know node.
+restClient.post("http://" + initialNodeIpAddress + ":" + initialNodePortNumber + "/api/ping", args , function (data, response) {
+   // parsed response body as js object 
+   console.log(data);
+   // raw response 
+   console.log(response);
+});
 
 
 

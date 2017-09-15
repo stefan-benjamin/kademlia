@@ -28,14 +28,11 @@ class BucketManager {
     receiveNode(nodeId, contact) {
         var appropriateBucket = this._selectBucket(nodeId);
 
-        if (this.buckets.has(appropriateBucket)) {
-            
+        if (!this.buckets.has(appropriateBucket)) {
+           var tempBucket = new bucket();
+           this.buckets.set(appropriateBucket, tempBucket);
         }
-        else {
-            var tempBucket = new bucket();
-            this.buckets.set(appropriateBucket, tempBucket);
-        }
-
+       
         this.buckets.get(appropriateBucket).set(nodeId, contact);
     }
 
