@@ -9,7 +9,7 @@ class BucketManager {
 
     constructor() {
         this.buckets = new Map();
-        this.DISTANCE_IS_ZERO = 1001;
+        this.DISTANCE_IS_ZERO = "ERR1001";
     }
 
     _selectBucket(contactId) {
@@ -60,13 +60,12 @@ class BucketManager {
 
         
 
-        //if (this.buckets.has(bucketIndex)) {
-        //    result.bucket = this.buckets.get(bucketIndex);
-        //}
-        //else {
-        //    var freshBucket = new bucket();
-
-        //}
+        if (this.buckets.has(bucketIndex)) {
+            result.bucket = this.buckets.get(bucketIndex);
+        }
+        else {
+            var freshBucket = new bucket();
+        }
 
         return result;
 
