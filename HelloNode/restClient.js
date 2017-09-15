@@ -15,12 +15,13 @@ exports.pingNode = function (ipAddress, portNumber, callback, errorCallback) {
       // parsed response body as js object 
       console.log("Pong received from " + data.nodeId);
 
-      callback(data.nodeId);}
+      callback({ nodeId: data.nodeId, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   }
    );
 
    req.on('error', function (err) {
       console.log("Error while pinging " + ipAddress);
 
-      errorCallback(err);
+      errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
    });
 };

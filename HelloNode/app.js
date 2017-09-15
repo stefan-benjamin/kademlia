@@ -4,7 +4,7 @@ console.log('Starting node...');
 
 var constants = require('./constants');
 var globals = require('./globals');
-var pinger = require('./pinger');
+var pinger = require('./restClient');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
@@ -93,10 +93,11 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 bm.getClosestNodes(randomNodeId);
 
-// When we start, make a ping to the other know node. 
-var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
+// When we start, make a ping to the other known node. 
+var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
    console.log("Ping ok");
-
+   bm.receiveNode(result.nodeId, { ipAddress: globals.initialNodeIpAddress, port: globals.initialNodePortNumber });
+   
 }, function () {
    console.log("Ping failed");
    });
