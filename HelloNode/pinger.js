@@ -2,8 +2,8 @@
 var RestClient = require('node-rest-client').Client;
 var restClient = new RestClient();
 
-exports.pingNode = function (ipAddress, portNumber) {
-
+exports.pingNode = function (ipAddress, portNumber, callback, errorCallback) {
+   
    console.log("Pinging node with ip: " + ipAddress + " on port " + portNumber);
 
    var args = {
@@ -11,10 +11,16 @@ exports.pingNode = function (ipAddress, portNumber) {
       headers: { "Content-Type": "application/json" }
    };
 
-   restClient.post("http://" + ipAddress + ":" + portNumber + "/api/ping", args, function (data, response) {
+   var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/api/ping", args, function (data, response) {
       // parsed response body as js object 
-      console.log(data);
-      // raw response 
-      console.log(response);
+      console.log("Pong received from " + data.nodeId);
+
+      callback(data.nodeId);}
+   );
+
+   req.on('error', function (err) {
+      console.log("Error while pinging " + ipAddress);
+
+      errorCallback(err);
    });
 };

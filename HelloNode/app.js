@@ -93,16 +93,14 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 bm.getClosestNodes(randomNodeId);
 
+// When we start, make a ping to the other know node. 
+var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
+   console.log("Ping ok");
 
+}, function () {
+   console.log("Ping failed");
+   });
 
-// When we start, make a ping to the other know node.
-pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber);
-//restClient.post("http://" + initialNodeIpAddress + ":" + initialNodePortNumber + "/api/ping", args , function (data, response) {
-//   // parsed response body as js object 
-//   console.log(data);
-//   // raw response 
-//   console.log(response);
-//});
 
 
 
