@@ -36,7 +36,7 @@ globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 console.log("Node id: " + globals.nodeId);
 
 //Create a BucketManager
-var bm = new bucketmanager(globals.nodeId);
+var bm = new bucketmanager();
 
 // view engine setup
 var path = require('path');
@@ -89,8 +89,6 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 //b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
 console.log("Created a new bucket");
 
-//Create a BucketManager
-var bm = new bucketmanager(globals.nodeId);
 bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 bm.getClosestNodes(randomNodeId);

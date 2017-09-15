@@ -1,18 +1,18 @@
 ﻿'use strict';
 
 const constants = require('./constants');
+var globals = require('./globals');
 const utils = require('./utils');
 const bucket = require('./bucket');
 
 class BucketManager {
 
-    constructor(pCurrentNodeId) {
+    constructor() {
         this.buckets = new Map();
-        this.currentNodeId = pCurrentNodeId;
     }
 
     _selectBucket(contactId) {
-        var distance = utils.getDistance(this.currentNodeId, contactId);
+       var distance = utils.getDistance(globals.nodeId, contactId);
 
         var x = 0;
         while (true) {
@@ -37,7 +37,7 @@ class BucketManager {
     }
 
     getClosestNodes(nodeId) {
-        var distanceFromMeToTargetNode = utils.getDistance(nodeId, this.currentNodeId);
+       var distanceFromMeToTargetNode = utils.getDistance(nodeId, globals.nodeId);
 
         var bucketNumber = Math.floor(Math.log2(distanceFromMeToTargetNode));
 
