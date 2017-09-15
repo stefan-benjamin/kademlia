@@ -31,12 +31,12 @@ console.log("Listening on port " + globals.portNumber);
 var crypto = require('crypto');
 var nodeIdCrypto = crypto.createHash('sha1');
 nodeIdCrypto.update(addresses + globals.portNumber);
-var nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
-console.log("Node id: " + nodeId);
+console.log("Node id: " + globals.nodeId);
 
 //Create a BucketManager
-var bm = new bucketmanager(nodeId);
+var bm = new bucketmanager(globals.nodeId);
 
 // view engine setup
 var path = require('path');
@@ -48,7 +48,7 @@ app.get('/', function (req, res) {
    //res.send('App Homepage');
    var buckets = bm.getBuckets();
 
-   res.render('index', { nodeId: nodeId, ipAddresses: addresses, localPort: globals.portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
+   res.render('index', { nodeId: globals.nodeId, ipAddresses: addresses, localPort: globals.portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
 });
 
 app.post('/api/ping', function (req, res) {
@@ -62,7 +62,7 @@ app.post('/api/ping', function (req, res) {
 
    //update buckets - insert the senderId
    
-   res.send({ senderId: senderId, nodeId: nodeId });
+   res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
 
 app.get('/api/findnode', function (req, res) {
@@ -72,7 +72,7 @@ app.get('/api/findnode', function (req, res) {
 
    console.log('Findnode received from ' + senderId);
 
-   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: nodeId, targetNodeId: targetNodeId, results: null });
+   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, results: null });
 });
 
 // Get distance between this node and another random node
@@ -82,7 +82,7 @@ var randomNodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
 console.log("Random node Id: " + randomNodeId);
 
-console.log(utils.getDistance(nodeId, randomNodeId));
+console.log(utils.getDistance(globals.nodeId, randomNodeId));
 
 bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
@@ -90,15 +90,12 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 console.log("Created a new bucket");
 
 //Create a BucketManager
-var bm = new bucketmanager(nodeId);
+var bm = new bucketmanager(globals.nodeId);
 bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 
 bm.getClosestNodes(randomNodeId);
 
-var args = {
-   data: { senderId: nodeId, senderPort: globals.portNumber },
-   headers: { "Content-Type": "application/json" }
-};
+
 
 // When we start, make a ping to the other know node.
 pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber);
