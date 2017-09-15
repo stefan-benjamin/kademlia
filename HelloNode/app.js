@@ -3,20 +3,16 @@
 console.log('Starting node...');
 
 var constants = require('./constants');
+var globals = require('./globals');
+var pinger = require('./pinger');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
 
-//Default value, used when debugging in VS.
-var portNumber = 8080; 
-var initialNodeIpAddress = 'localhost';
-var initialNodePortNumber = portNumber;
-
-
 if (process.argv[2] && process.argv[3] && process.argv[4]) {
-   portNumber = process.argv[2];
-   initialNodeIpAddress = process.argv[3];
-   initialNodePortNumber = process.argv[4];
+   globals.portNumber = process.argv[2];
+   globals.initialNodeIpAddress = process.argv[3];
+   globals.initialNodePortNumber = process.argv[4];
 }
 
 var addresses = utils.getIpAddresses();
@@ -29,14 +25,12 @@ var app = express(); // the main app
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
-var RestClient = require('node-rest-client').Client;
-var restClient = new RestClient();
-app.listen(portNumber);
-console.log("Listening on port " + portNumber);
+app.listen(globals.portNumber);
+console.log("Listening on port " + globals.portNumber);
 
 var crypto = require('crypto');
 var nodeIdCrypto = crypto.createHash('sha1');
-nodeIdCrypto.update(addresses + portNumber);
+nodeIdCrypto.update(addresses + globals.portNumber);
 var nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 
 console.log("Node id: " + nodeId);
@@ -54,7 +48,7 @@ app.get('/', function (req, res) {
    //res.send('App Homepage');
    var buckets = bm.getBuckets();
 
-   res.render('index', { nodeId: nodeId, ipAddresses: addresses, localPort: portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: initialNodePortNumber, buckets: buckets });
+   res.render('index', { nodeId: nodeId, ipAddresses: addresses, localPort: globals.portNumber, initialNodeIp: initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
 });
 
 app.post('/api/ping', function (req, res) {
@@ -78,7 +72,7 @@ app.get('/api/findnode', function (req, res) {
 
    console.log('Findnode received from ' + senderId);
 
-   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: nodeId, results: null });
+   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: nodeId, targetNodeId: targetNodeId, results: null });
 });
 
 // Get distance between this node and another random node
@@ -102,17 +96,18 @@ bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 bm.getClosestNodes(randomNodeId);
 
 var args = {
-   data: { senderId: nodeId, senderPort: portNumber },
+   data: { senderId: nodeId, senderPort: globals.portNumber },
    headers: { "Content-Type": "application/json" }
 };
 
 // When we start, make a ping to the other know node.
-restClient.post("http://" + initialNodeIpAddress + ":" + initialNodePortNumber + "/api/ping", args , function (data, response) {
-   // parsed response body as js object 
-   console.log(data);
-   // raw response 
-   console.log(response);
-});
+pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber);
+//restClient.post("http://" + initialNodeIpAddress + ":" + initialNodePortNumber + "/api/ping", args , function (data, response) {
+//   // parsed response body as js object 
+//   console.log(data);
+//   // raw response 
+//   console.log(response);
+//});
 
 
 

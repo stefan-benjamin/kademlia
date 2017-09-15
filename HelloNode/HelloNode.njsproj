@@ -38,6 +38,12 @@
     <Compile Include="constants.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="globals.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pinger.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="utils.js">
       <SubType>Code</SubType>
     </Compile>
