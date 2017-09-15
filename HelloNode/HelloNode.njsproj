@@ -41,7 +41,7 @@
     <Compile Include="globals.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pinger.js">
+    <Compile Include="restClient.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="utils.js">
