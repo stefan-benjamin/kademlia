@@ -75,6 +75,7 @@ class BucketManager {
        var result = [];
        //iterate through the buckets
        this.buckets.forEach(function (value, key, map) {
+          
           var bucketNodesArray = [];
           value.forEach(function (value, key, map) {
 
@@ -86,7 +87,9 @@ class BucketManager {
              bucketNodesArray.push(nodeInfo);
           })
 
-          result.push(bucketNodesArray);
+          var bucketResult = { key: key, nodes: bucketNodesArray }
+
+          result.push(bucketResult);
        })
 
        return result;

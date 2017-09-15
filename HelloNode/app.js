@@ -56,11 +56,13 @@ app.post('/api/ping', function (req, res) {
    var senderId = req.body.senderId;
    var senderPort = req.body.senderPort;
    //The IP address of the sender needs to be retrieved from the query itself.
-   var senderIpAddress = req.connection.remoteAddress;
+   var senderIpAddress = req.socket.remoteAddress;
    
    console.log('Ping received from ' + senderId + ', having IP: ' + senderIpAddress);
 
    //update buckets - insert the senderId
+   bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
+
    
    res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
@@ -95,7 +97,7 @@ bm.getClosestNodes(randomNodeId);
 
 // When we start, make a ping to the other known node. 
 var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
-   console.log("Ping ok");
+   console.log("Ping received from " + result.requestedIpAddress + " on port " + result.requestedPort);
    bm.receiveNode(result.nodeId, { ipAddress: globals.initialNodeIpAddress, port: globals.initialNodePortNumber });
    
 }, function () {

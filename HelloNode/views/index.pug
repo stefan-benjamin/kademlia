@@ -16,7 +16,7 @@ html
     h2 Buckets (#{buckets.length}):
         ul
             each bucket in buckets
-                li Bucket with #{bucket.length} nodes.
+                li Bucket with #{bucket.nodes.length} nodes, key #{bucket.key}.
                 ul
-                    each node in bucket
+                    each node in bucket.nodes
                         li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}
