@@ -35,6 +35,10 @@ exports.convertIPv6ToIPv4 = function (ipv6Address) {
         var parsedAddress = ipaddr.parse(ipv6Address);
         return parsedAddress.toIPv4Address().toString();
     }
+    //If it is an ipv4, simply return it
+    else if (ipaddr.IPv4.isValid(ipv6Address)) {
+        return ipv6Address;
+    }
     else {
         return false;
     }
