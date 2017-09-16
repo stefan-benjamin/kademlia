@@ -57,7 +57,9 @@ app.post('/api/ping', function (req, res) {
    var senderPort = req.body.senderPort;
    //The IP address of the sender needs to be retrieved from the query itself.
    var senderIpAddress = req.socket.remoteAddress;
-   
+
+   senderIpAddress = utils.convertIPv6ToIPv4(senderIpAddress);
+
    console.log('Ping received from ' + senderId + ', having IP: ' + senderIpAddress);
 
    //update buckets - insert the senderId

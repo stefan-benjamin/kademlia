@@ -38,7 +38,7 @@ class BucketManager {
         var appropriateBucket = this._selectBucket(nodeId);
 
         if (appropriateBucket === this.DISTANCE_IS_ZERO) {
-            console.log("ERROR: Couldn't add myself as node to a bucket.");
+            console.log("WARNING: Unable to add myself to a bucket.");
             return false;
         }
 

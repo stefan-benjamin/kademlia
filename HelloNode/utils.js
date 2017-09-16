@@ -1,5 +1,6 @@
 ﻿var constants = require('./constants');
 var xor = require('buffer-xor');
+var ipaddr = require('ipaddr.js');
 
 
 exports.getIpAddresses = function () {
@@ -28,4 +29,13 @@ exports.getDistance = function (id1, id2) {
 };
 
 
+exports.convertIPv6ToIPv4 = function (ipv6Address) {
 
+    if (ipaddr.IPv6.isValid(ipv6Address)) {
+        var parsedAddress = ipaddr.parse(ipv6Address);
+        return parsedAddress.toIPv4Address().toString();
+    }
+    else {
+        return false;
+    }
+}
