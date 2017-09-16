@@ -56,15 +56,31 @@ class BucketManager {
 
         var result = {};
 
-        result.bucket = this.buckets.get(bucketIndex);
-
-        
 
         if (this.buckets.has(bucketIndex)) {
             result.bucket = this.buckets.get(bucketIndex);
         }
         else {
-            var freshBucket = new bucket();
+            //try looking to the left and right of the current bucket index and see if we find a bucket
+            var offset = 1;
+
+            while (offset <= constants.BUCKET_NEIGHBOUR_SEARCH_RANGE) {
+                
+                var rightOfBucket = bucketIndex + offset;
+                var leftOfBucket = bucketIndex - offset;
+
+                if (this.buckets.has(rightOfBucket)) {
+                    result.bucket = this.buckets.get(rightOfBucket);
+                    break;
+                }
+                else if (leftOfBucket > 0 && this.buckets.has(leftOfBucket)) {
+                    result.bucket = this.buckets.get(leftOfBucket);
+                    break;
+                }
+
+                offset++;
+            }
+
         }
 
         return result;
