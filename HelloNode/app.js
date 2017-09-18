@@ -86,7 +86,9 @@ app.get('/api/findnode', function (req, res) {
 app.get('/api/internal/nodelookup', function (req, res) {
    var targetNodeId = req.query.targetNodeId;
 
-   res.send ({ result: 'IP_TEST' });
+   var result = bm.getClosestNodes(targetNodeId);
+
+   res.send({ result: result });
 });
 
 //THIS IS A TEST - TO BE REMOVED
