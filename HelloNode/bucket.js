@@ -9,19 +9,27 @@ const utils = require('./utils');
 class Bucket extends Map {
   
    set(nodeId, contact) {
-      if (this.has(nodeId)) {
+      if (this.has(nodeId))
+      {
          super.delete(nodeId);
          super.set(nodeId, contact); //setting at the end of the map (HEAD)
-      } else if (this.size < constants.K) { //if the bucket is not full
-         let bucketEntries = [...this.entries()]; //save existing entries
+      }
+      else
+      {
+         if (this.size < constants.K) //the bucket is not full
+         {
+            super.set(nodeId, contact); //setting at the end of the map (HEAD)
+         }
+         else //bucket is full so we need to decide if to kick a contact
+         {
+            //ping the oldest contact in the bucket (TAIL)
 
-         super.clear(); 
-         super.set(nodeId, contact); //add the new element - at the TAIL
+            //if ping is successful - move this contact to head and ignore the newly arrived contact
 
-         for (let [nodeId, contact] of bucketEntries) { //add all the already existing elements again
-            super.set(nodeId, contact);
+            //if ping fails - remove this contact (from tail) and add the new contact (at head)
          }
       }
+      
    }
 
    get(nodeId)

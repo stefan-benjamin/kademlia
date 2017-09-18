@@ -86,9 +86,20 @@ app.get('/api/findnode', function (req, res) {
 app.get('/api/internal/nodelookup', function (req, res) {
    var targetNodeId = req.query.targetNodeId;
 
-   var result = bm.getClosestNodes(targetNodeId);
+   var closestNodeFound = null;
 
-   res.send({ result: result });
+   //look in its own buckets
+   var bucketResult = bm.getClosestNodes(targetNodeId);
+   if (bucketResult.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE || bucketResult.returnType === constants.GET_CLOSEST_NODE_FOUND_NOTHING)
+   {
+      res.send({ result: bucketResult.content });
+   }
+   else //got a bucket as result
+   {
+      //shortlist the nodes to contact for further find_node
+
+   }
+   
 });
 
 //THIS IS A TEST - TO BE REMOVED
