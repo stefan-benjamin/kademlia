@@ -67,7 +67,7 @@ class BucketManager {
 
       if (bucketWithClosestNodes.has(nodeId)) {
          result.returnType = constants.GET_CLOSEST_NODE_FOUND_THE_NODE;
-         result.content = bucketWithClosestNodes.get(nodeId);
+         result.content = bucketWithClosestNodes.getFull(nodeId);
       }
       else {
          result.returnType = constants.GET_CLOSEST_NODE_FOUND_A_BUCKET;

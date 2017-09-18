@@ -87,6 +87,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
    var targetNodeId = req.query.targetNodeId;
 
    var closestNodeFound = null;
+   var minimumDistanceFound = Infinity;
 
    //look in its own buckets
    var bucketResult = bm.getClosestNodes(targetNodeId);
@@ -96,8 +97,37 @@ app.get('/api/internal/nodelookup', function (req, res) {
    }
    else //got a bucket as result
    {
-      //shortlist the nodes to contact for further find_node
+      //update closestNodeFound with our local result
+      bucketResult.content.forEach(function (current, index, array) {
 
+         var distance = utils.getDistance(targetNodeId, current.nodeId);
+
+         if (minimumDistanceFound > distance) {
+            minimumDistanceFound = distance;
+            closestNodeFound = current;
+         }
+      }
+      );
+
+
+      //shortlist the nodes to contact for further find_node
+      //call find_node on alpha nodes from the returned result
+      var maxIndex = Math.min(bucketResult.content.length, constants.alpha);
+
+      for (var i = 0; i < maxIndex; i++)
+      {
+         var nodeIpAddress = bucketResult.content[i].ipAddress;
+         var nodePort = bucketResult.content[i].port;
+
+         console.log("Making findNode call to " + nodeIpAddress + " on port " + nodePort);
+         pinger.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
+            var result = data.result;
+
+         }, function () {
+
+
+         })
+      }
    }
    
 });
@@ -110,8 +140,8 @@ nodeIdCrypto.update("RANDOM 2");
 var randomNodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
 console.log("Random node Id: " + randomNodeId);
 console.log(utils.getDistance(globals.nodeId, randomNodeId));
-bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
-bm.getClosestNodes(randomNodeId);
+//bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
+//bm.getClosestNodes(randomNodeId);
 
 //END: THIS IS A TEST - TO BE REMOVED
 
