@@ -70,12 +70,15 @@ app.post('/api/ping', function (req, res) {
 
 app.get('/api/findnode', function (req, res) {
 
-   var senderId = req.query.senderId;
-   var targetNodeId = req.query.targetNodeId;
+   var senderId = req.body.senderId;
+   var targetNodeId = req.body.targetNodeId;
 
-   console.log('Findnode received from ' + senderId);
+   console.log('FindNode received from ' + senderId);
 
-   res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, results: null });
+   //find closest nodes
+   var result = bucketmanager.getClosestNodes(targetNodeId);
+
+   res.send({ senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, result: result });
 });
 
 //THIS IS A TEST - TO BE REMOVED
@@ -92,7 +95,7 @@ bm.getClosestNodes(randomNodeId);
 //END: THIS IS A TEST - TO BE REMOVED
 
 // When we start, make a ping to the other known node. 
-var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
+var result = pinger.ping(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
    bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
    
 }, function () {
