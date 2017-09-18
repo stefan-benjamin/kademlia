@@ -13,14 +13,14 @@ exports.pingNode = function (ipAddress, portNumber, callback, errorCallback) {
 
    var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/api/ping", args, function (data, response) {
       // parsed response body as js object 
-      console.log("Pong received from " + data.nodeId);
+      console.log("Pong received from " + ipAddress + " on port " + portNumber);
 
       callback({ nodeId: data.nodeId, requestedIpAddress: ipAddress, requestedPort: portNumber });
    }
    );
 
    req.on('error', function (err) {
-      console.log("Error while pinging " + ipAddress);
+      console.log("Error while pinging " + ipAddress + " on port " + portNumber);
 
       errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
    });

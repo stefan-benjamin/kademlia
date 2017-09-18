@@ -2,7 +2,7 @@ ECHO OFF
 
 FOR /L %%A IN (8081,1,8090) DO (
   ECHO %%A
-  start "" node app.js %%A localhost 8080
+  start "" node app.js %%A 127.0.0.1 8080
 )
 
 PAUSE

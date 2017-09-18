@@ -64,7 +64,6 @@ app.post('/api/ping', function (req, res) {
 
    //update buckets - insert the senderId
    bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
-
    
    res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
@@ -79,31 +78,25 @@ app.get('/api/findnode', function (req, res) {
    res.send({ type: "FINDNODE_RESPONSE", senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, results: null });
 });
 
+//THIS IS A TEST - TO BE REMOVED
+
 // Get distance between this node and another random node
 nodeIdCrypto = crypto.createHash('sha1');
 nodeIdCrypto.update("RANDOM 2");
 var randomNodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
-
 console.log("Random node Id: " + randomNodeId);
-
 console.log(utils.getDistance(globals.nodeId, randomNodeId));
-
 bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
-
-//b.set(randomNodeId, { Ip: '192.168.2.1', Port: 8080})
-console.log("Created a new bucket");
-
-bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
-
 bm.getClosestNodes(randomNodeId);
+
+//END: THIS IS A TEST - TO BE REMOVED
 
 // When we start, make a ping to the other known node. 
 var result = pinger.pingNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
-   console.log("Ping received from " + result.requestedIpAddress + " on port " + result.requestedPort);
-   bm.receiveNode(result.nodeId, { ipAddress: globals.initialNodeIpAddress, port: globals.initialNodePortNumber });
+   bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
    
 }, function () {
-   console.log("Ping failed");
+   console.log("Ping to intial known node failed");
    });
 
 
