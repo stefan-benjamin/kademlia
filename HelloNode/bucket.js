@@ -23,6 +23,27 @@ class Bucket extends Map {
          }
       }
    }
+
+   get(nodeId)
+   {
+      return { nodeId: nodeId, ipAddress: super.get(nodeId).ip, port: super.get(nodeId).port }
+   }
+
+   toJson() {
+      
+      var bucketNodesArray = [];
+      this.forEach(function (value, key, map) {
+
+         var nodeInfo = {};
+         nodeInfo.nodeId = key;
+         nodeInfo.ipAddress = value.ip;
+         nodeInfo.port = value.port;
+
+         bucketNodesArray.push(nodeInfo);
+      })
+      
+      return bucketNodesArray;
+   }
 }
 
 module.exports = Bucket;

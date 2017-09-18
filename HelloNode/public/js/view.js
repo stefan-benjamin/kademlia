@@ -8,7 +8,7 @@
       var queryData = { targetNodeId: targetNodeId}
 
       $.getJSON("/api/internal/nodelookup", queryData, function (resultData) {
-         $("#resultDiv").empty().append(resultData.result);
+         $("#resultDiv").empty().append(JSON.stringify(resultData.result));
 
       });
 
