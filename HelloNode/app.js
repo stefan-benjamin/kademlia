@@ -17,13 +17,15 @@ if (process.argv[2] && process.argv[3] && process.argv[4]) {
 
 globals.ipAddresses = utils.getIpAddresses();
 
-console.log("IP addresses: " + globals.ipAddresses );
+console.log("IP addresses: " + globals.ipAddresses);
 
 var express = require('express');
 const bodyParser = require('body-parser');
 var app = express(); // the main app
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
+
+app.use(express.static(__dirname + '/public'));
 
 app.listen(globals.portNumber);
 console.log("Listening on port " + globals.portNumber);
@@ -64,14 +66,14 @@ app.post('/api/ping', function (req, res) {
 
    //update buckets - insert the senderId
    bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
-   
+
    res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
 
 app.get('/api/findnode', function (req, res) {
 
-   var senderId = req.body.senderId;
-   var targetNodeId = req.body.targetNodeId;
+   var senderId = req.query.senderId;
+   var targetNodeId = req.query.targetNodeId;
 
    console.log('FindNode received from ' + senderId);
 
@@ -79,6 +81,12 @@ app.get('/api/findnode', function (req, res) {
    var result = bucketmanager.getClosestNodes(targetNodeId);
 
    res.send({ senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, result: result });
+});
+
+app.get('/api/internal/nodelookup', function (req, res) {
+   var targetNodeId = req.query.targetNodeId;
+
+   res.send ({ result: 'IP_TEST' });
 });
 
 //THIS IS A TEST - TO BE REMOVED
@@ -97,10 +105,10 @@ bm.getClosestNodes(randomNodeId);
 // When we start, make a ping to the other known node. 
 var result = pinger.ping(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
    bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
-   
+
 }, function () {
    console.log("Ping to intial known node failed");
-   });
+});
 
 
 

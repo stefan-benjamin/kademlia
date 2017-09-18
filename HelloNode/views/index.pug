@@ -1,6 +1,9 @@
 ﻿doctype html
 html
   head
+  script(src='/js/jquery-3.2.1.js')
+  script(src='/js/view.js')
+
     title Node: #{nodeId}
   body
     h1 Node Id: #{nodeId}
@@ -12,10 +15,11 @@ html
             each val in ipAddresses
                 li= val
   
-    form(action='/ping' method='POST')
-        |Node Id: 
-        input(type='text', name='nodeId') 
-        input(type='submit', value='Ping')
+    input(type='text', id='nodeId')
+    button#nodeLookupButton Find Node
+    br
+    div#resultDiv Enter node id
+
 
     h2 Buckets (#{buckets.length}):
         ul
