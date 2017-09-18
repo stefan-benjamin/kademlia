@@ -70,15 +70,15 @@ app.post('/api/ping', function (req, res) {
    res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
 
-app.get('/api/findnode', function (req, res) {
+app.post('/api/findnode', function (req, res) {
 
-   var senderId = req.query.senderId;
-   var targetNodeId = req.query.targetNodeId;
+   var senderId = req.body.senderId;
+   var targetNodeId = req.body.targetNodeId;
 
    console.log('FindNode received from ' + senderId);
 
    //find closest nodes
-   var result = bucketmanager.getClosestNodes(targetNodeId);
+   var result = bm.getClosestNodes(targetNodeId);
 
    res.send({ senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, result: result });
 });
@@ -88,43 +88,53 @@ app.get('/api/internal/nodelookup', function (req, res) {
 
    var closestNodeFound = null;
    var minimumDistanceFound = Infinity;
+   var runningQueries = 0;
 
    //look in its own buckets
    var bucketResult = bm.getClosestNodes(targetNodeId);
-   if (bucketResult.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE || bucketResult.returnType === constants.GET_CLOSEST_NODE_FOUND_NOTHING)
+   
+   _find(bucketResult);
+   
+
+   function _find(bucketResult, nodeTargetId)
    {
-      res.send({ result: bucketResult.content });
-   }
-   else //got a bucket as result
-   {
-      //update closestNodeFound with our local result
-      bucketResult.content.forEach(function (current, index, array) {
-
-         var distance = utils.getDistance(targetNodeId, current.nodeId);
-
-         if (minimumDistanceFound > distance) {
-            minimumDistanceFound = distance;
-            closestNodeFound = current;
-         }
-      }
-      );
-
-
       //shortlist the nodes to contact for further find_node
       //call find_node on alpha nodes from the returned result
       var maxIndex = Math.min(bucketResult.content.length, constants.alpha);
 
-      for (var i = 0; i < maxIndex; i++)
-      {
+      for (var i = 0; i < maxIndex; i++) {
          var nodeIpAddress = bucketResult.content[i].ipAddress;
          var nodePort = bucketResult.content[i].port;
 
          console.log("Making findNode call to " + nodeIpAddress + " on port " + nodePort);
+         runningQueries++;
          pinger.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
             var result = data.result;
+            runningQueries--;
+
+            //check that we did not find the required value
+            if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
+               //return data.result.content;
+               res.send({ result: data.result.content });
+            }
+
+            //data.result.content.forEach(function (current, index, array) {
+               
+            //   var distance = utils.getDistance(targetNodeId, current.nodeId);
+
+            //   if (minimumDistanceFound > distance) {
+            //      minimumDistanceFound = distance;
+            //      closestNodeFound = current;
+            //   }
+            //})
+
+            if (runningQueries < constants.alpha)
+            {
+               _find(data.result, nodeTargetId);
+            }
 
          }, function () {
-
+            runningQueries--;
 
          })
       }
