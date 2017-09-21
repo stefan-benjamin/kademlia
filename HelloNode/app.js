@@ -93,7 +93,13 @@ app.get('/api/internal/nodelookup', function (req, res) {
 
    //look in its own buckets
    var bucketResult = bm.getClosestNodes(targetNodeId);
-   
+
+   if (bucketResult.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE)
+   {
+      res.send({ result: bucketResult.content });
+      return;
+   }
+
    _find(bucketResult);
    
 
@@ -106,38 +112,41 @@ app.get('/api/internal/nodelookup', function (req, res) {
       for (var i = 0; i < maxIndex; i++) {
          var nodeIpAddress = bucketResult.content[i].ipAddress;
          var nodePort = bucketResult.content[i].port;
+         var nodeId = bucketResult.content[i].nodeId;
+         
+         if (nodeId !== globals.nodeId) {
+            console.log("Making findNode call to " + nodeIpAddress + " on port " + nodePort);
+            runningQueries++;
+            pinger.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
+               var result = data.result;
+               runningQueries--;
 
-         console.log("Making findNode call to " + nodeIpAddress + " on port " + nodePort);
-         runningQueries++;
-         pinger.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
-            var result = data.result;
-            runningQueries--;
+               //check that we did not find the required value
+               if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
+                  //return data.result.content;
+                  res.send({ result: data.result.content });
+                  return;
+               }
 
-            //check that we did not find the required value
-            if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
-               //return data.result.content;
-               res.send({ result: data.result.content });
-            }
+               //data.result.content.forEach(function (current, index, array) {
 
-            //data.result.content.forEach(function (current, index, array) {
-               
-            //   var distance = utils.getDistance(targetNodeId, current.nodeId);
+               //   var distance = utils.getDistance(targetNodeId, current.nodeId);
 
-            //   if (minimumDistanceFound > distance) {
-            //      minimumDistanceFound = distance;
-            //      closestNodeFound = current;
-            //   }
-            //})
+               //   if (minimumDistanceFound > distance) {
+               //      minimumDistanceFound = distance;
+               //      closestNodeFound = current;
+               //   }
+               //})
 
-            if (runningQueries < constants.alpha)
-            {
-               _find(data.result, nodeTargetId);
-            }
+               if (runningQueries < constants.alpha) {
+                  _find(data.result, nodeTargetId);
+               }
 
-         }, function () {
-            runningQueries--;
+            }, function () {
+               runningQueries--;
 
-         })
+            })
+         }
       }
    }
    
