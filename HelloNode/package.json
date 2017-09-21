@@ -12,6 +12,7 @@
     "express": "^4.15.4",
     "ipaddr.js": "^1.5.2",
     "node-rest-client": "^3.1.0",
+    "onoff": "^1.1.7",
     "pug": "^2.0.0-rc.4"
   }
 }

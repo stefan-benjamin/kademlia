@@ -41,6 +41,9 @@
     <Compile Include="globals.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="gpioInterface.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public\js\jquery-3.2.1.js" />
     <Compile Include="public\js\view.js">
       <SubType>Code</SubType>

@@ -6,4 +6,5 @@
    initialNodePortNumber: 8080,
    nodeId: null,
    ipAddresses: null,
+   useGpio: false
 }
