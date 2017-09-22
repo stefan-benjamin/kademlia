@@ -74,7 +74,13 @@ app.post('/api/ping', function (req, res) {
 app.post('/api/findnode', function (req, res) {
 
    var senderId = req.body.senderId;
+   var senderPort = req.body.senderPort;
    var targetNodeId = req.body.targetNodeId;
+
+   //The IP address of the sender needs to be retrieved from the query itself.
+   var senderIpAddress = req.socket.remoteAddress;
+
+   senderIpAddress = utils.convertIPv6ToIPv4(senderIpAddress);
 
    console.log('FindNode received from ' + senderId);
 
@@ -82,6 +88,9 @@ app.post('/api/findnode', function (req, res) {
    var result = bm.getClosestNodes(targetNodeId);
 
    res.send({ senderId: senderId, nodeId: globals.nodeId, targetNodeId: targetNodeId, result: result });
+
+   //after sending the result, update our own bucket because we got information regarding the sender
+   bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
 });
 
 app.get('/api/internal/nodelookup', function (req, res) {
@@ -131,6 +140,16 @@ app.get('/api/internal/nodelookup', function (req, res) {
                   //return data.result.content;
                   res.send({ result: data.result.content });
                   resultFound = true;
+
+                  //update your own bucket with the found node
+                  bm.receiveNode(data.result.content.nodeId, { ip: data.result.content.ipAddress, port: data.result.content.port })
+               }
+               else if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET)
+               {
+                  //update your own bucket with the new nodes we know about
+                  data.result.content.forEach(function (node) {
+                     bm.receiveNode(node.nodeId, { ip: node.ipAddress, port: node.port });
+                  });
                }
 
                if (!resultFound && runningQueries < constants.alpha) {
