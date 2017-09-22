@@ -33,30 +33,10 @@ class BucketManager {
         var distanceFromMeToTargetNode = utils.getDistance(nodeIdOfCurrentNode, globals.nodeId);
         var bucketIndex = Math.floor(Math.log2(distanceFromMeToTargetNode));
 
-        if (this.buckets.has(bucketIndex)) {
-            //do nothing
+        if (!this.buckets.has(bucketIndex)) {
+           this.buckets.set(bucketIndex, new bucket());
         }
-        else {
-            var offset = 1;
-
-            while (offset <= constants.BUCKET_NEIGHBOUR_SEARCH_RANGE) {
-
-                var rightOfBucket = bucketIndex + offset;
-                var leftOfBucket = bucketIndex - offset;
-
-                if (this.buckets.has(rightOfBucket)) {
-                    bucketIndex = rightOfBucket;
-                    break;
-                }
-                else if (leftOfBucket > 0 && this.buckets.has(leftOfBucket)) {
-                    bucketIndex = leftOfBucket;
-                    break;
-                }
-
-                offset++;
-            }
-        }
-
+      
         return bucketIndex;
     }
 
@@ -76,7 +56,56 @@ class BucketManager {
         }
         else {
             result.returnType = constants.GET_CLOSEST_NODE_FOUND_A_BUCKET;
-            result.content = bucketWithClosestNodes.toJson();
+            //result.content = bucketWithClosestNodes.toJson();
+
+
+           //if bucketWithClosestNodes.length == k return it.
+           //otherwise create a new tempBucket and add the elements from bucketWithClosestNodes.
+           //also start loooking left and right from the index to try to fill this tempbucket with k elements.
+
+            var tempBucket = new bucket();
+            bucketWithClosestNodes.toJson().forEach(function (element) {
+               tempBucket.set(element.nodeId, { ip: element.ipAddress, port: element.port });
+            });
+
+            if (tempBucket.size < constants.K)
+            {
+               var offset = 1;
+
+               while (offset <= constants.BUCKET_NEIGHBOUR_SEARCH_RANGE) {
+
+                  var rightOfBucket = bucketIndex + offset;
+                  var leftOfBucket = bucketIndex - offset;
+
+                  if (this.buckets.has(rightOfBucket)) {
+
+                     this.buckets.get(rightOfBucket).toJson().forEach(function (element) {
+                        if (tempBucket.size < constants.K) {
+                           tempBucket.set(element.nodeId, { ip: element.ipAddress, port: element.port });
+                        }
+                        else {
+                           
+                        }
+                     });
+                  }
+                  if (this.buckets.has(leftOfBucket)) {
+
+                     this.buckets.get(leftOfBucket).toJson().forEach(function (element) {
+                        if (tempBucket.size < constants.K) {
+                           tempBucket.set(element.nodeId, { ip: element.ipAddress, port: element.port });
+                        }
+                        else {
+                           
+                        }
+                     });
+                  }
+
+                  offset++;
+               }
+
+            }
+
+            result.content = tempBucket.toJson();
         }
 
         return result;
