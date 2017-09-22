@@ -8,7 +8,6 @@ var pinger = require('./restClient');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
-var gpioInterface = require('./gpioInterface');
 
 if (process.argv[2] && process.argv[3] && process.argv[4]) {
    globals.portNumber = process.argv[2];
@@ -193,19 +192,6 @@ var result = pinger.ping(globals.initialNodeIpAddress, globals.initialNodePortNu
 }, function () {
    console.log("Ping to intial known node failed");
    });
-
-app.post('/actuators/led', function (req, res) {
-   var ledValue = parseInt(req.body.value);
-
-   gpioInterface.writeToPin4(ledValue);
-   res.send();
-});
-
-app.get('/actuators/led', function (req, res) {
-   var pin4Value = gpioInterface.readFromPin4();
-   
-   res.send({ led: pin4Value });
-});
 
 
 
