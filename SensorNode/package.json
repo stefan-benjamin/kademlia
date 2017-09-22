@@ -1,0 +1,16 @@
+{
+  "name": "sensor-node",
+  "version": "0.0.0",
+  "description": "SensorNode",
+  "main": "app.js",
+  "author": {
+    "name": "stefa"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.1",
+    "express": "^4.15.4",
+    "node-rest-client": "^3.1.0",
+    "onoff": "^1.1.7",
+    "pug": "^2.0.0-rc.4"
+  }
+}
