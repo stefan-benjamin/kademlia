@@ -134,6 +134,27 @@ app.post('/api/store', function (req, res) {
    res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
 });
 
+
+app.get('/api/findvalue', function (req, res) {
+
+   var senderId = req.query.senderId;
+   var key = req.query.key;
+
+   console.log('FindValue received from ' + senderId);
+
+   if (storedValues.has(key))
+   {
+      res.send ( { key: key, value: storedValues.get(key) } );
+   }
+   else
+   {
+      //find closest nodes
+      var result = bm.getClosestNodes(globals.nodeId);
+
+      res.send({ senderId: senderId, nodeId: globals.nodeId, result: result });
+   }
+});
+
 app.get('/api/internal/nodelookup', function (req, res) {
    var calledNodes = new Map();
    
