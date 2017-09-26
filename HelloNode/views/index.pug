@@ -39,8 +39,8 @@ html
                         li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}  
                             a(href='http://' + node.ipAddress + ':' + node.port) Go to node
      
-     br
-     h2 Stored values (#{storedValues.length}):
+    br
+    h2 Stored values (#{storedValues.length}):
         ul
             each value in storedValues
                 li Key:  #{storedValues.key} , value #{storedValues.value}.

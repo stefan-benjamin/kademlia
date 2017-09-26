@@ -20,7 +20,9 @@
 
        var value = $("#valueInput").val();
 
-       $.post('/api/store', key, value, function (resp) {
+       var queryData = { senderId: null, forward: true, key: key, value: value }
+
+       $.post('/api/store', queryData, function (resp) {
            $("#storeResultDiv").empty().append(resp)
        });
    });

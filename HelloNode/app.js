@@ -47,6 +47,7 @@ app.set('view engine', 'pug');
 
 var storedValues = new Map();
 
+
 app.get('/', function (req, res) {
    console.log(app.mountpath);
    //res.send('App Homepage');
@@ -54,7 +55,7 @@ app.get('/', function (req, res) {
 
    var storedValuesArray = [];
    //iterate through the storedValues
-   this.storedValues.forEach(function (value, key, map) {
+   storedValues.forEach(function (value, key, map) {
       var storedValueJson = { key: key, value: value };
 
       storedValuesArray.push(storedValueJson);
