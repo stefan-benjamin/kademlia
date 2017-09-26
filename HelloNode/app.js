@@ -45,12 +45,22 @@ var path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+var storedValues = new Map();
+
 app.get('/', function (req, res) {
    console.log(app.mountpath);
    //res.send('App Homepage');
    var buckets = bm.getBuckets();
 
-   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets });
+   var storedValuesArray = [];
+   //iterate through the storedValues
+   this.storedValues.forEach(function (value, key, map) {
+      var storedValueJson = { key: key, value: value };
+
+      storedValuesArray.push(storedValueJson);
+   })
+
+   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets, storedValues: storedValuesArray });
 });
 
 app.post('/api/ping', function (req, res) {
@@ -92,6 +102,37 @@ app.post('/api/findnode', function (req, res) {
    bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
 });
 
+app.post('/api/store', function (req, res) {
+
+   var senderId = req.body.senderId;
+   var forward = req.body.forward;
+   var key = req.body.key;
+   var value = req.body.value;
+   
+   console.log('Store received from ' + senderId);
+
+   if (forward) {
+      //find closest nodes
+      var result = bm.getClosestNodes(globals.nodeId);
+
+      //call store on the k closest nodes - without further forwarding
+      if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
+         
+         result.content.forEach(function (node) {
+            
+            pinger.store(node.ipAddress, node.port, false, key, value, null, null);
+         });
+      }
+   }
+   else
+   {
+      //the call is not coming from the GUI, the value needs to be stored.
+      storedValues.set(key, value);
+   }
+
+   res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
+});
+
 app.get('/api/internal/nodelookup', function (req, res) {
    var calledNodes = new Map();
    
@@ -110,10 +151,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
    }
 
    _find(bucketResult, targetNodeId);
-
-
- 
-
+   
    function _find(bucketResult, nodeTargetId)
    {
       //shortlist the nodes to contact for further find_node
