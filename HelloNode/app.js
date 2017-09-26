@@ -120,8 +120,8 @@ app.post('/api/store', function (req, res) {
       if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
          
          result.content.forEach(function (node) {
-            
-            pinger.store(node.ipAddress, node.port, false, key, value, null, null);
+
+             pinger.store(node.ipAddress, node.port, false, key, value, function(){}, function(){});
          });
       }
    }

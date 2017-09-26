@@ -31,7 +31,14 @@ class BucketManager {
 
     _selectBucketForReading(nodeIdOfCurrentNode) {
         var distanceFromMeToTargetNode = utils.getDistance(nodeIdOfCurrentNode, globals.nodeId);
-        var bucketIndex = Math.floor(Math.log2(distanceFromMeToTargetNode));
+
+        if (distanceFromMeToTargetNode === 0) {
+            var bucketIndex = 0;
+        }
+        else {
+            var bucketIndex = Math.floor(Math.log2(distanceFromMeToTargetNode));
+        }
+        
 
         if (!this.buckets.has(bucketIndex)) {
            this.buckets.set(bucketIndex, new bucket());
@@ -42,9 +49,9 @@ class BucketManager {
 
     _getTargetNodeElseGetBucketWithClosestNodes(nodeId, bucketIndex) {
 
-        if (typeof this.buckets.get(bucketIndex) === 'undefined') {
-            return { returnType: constants.GET_CLOSEST_NODE_FOUND_NOTHING };
-        }
+        //if (typeof this.buckets.get(bucketIndex) === 'undefined') {
+        //    return { returnType: constants.GET_CLOSEST_NODE_FOUND_NOTHING };
+        //}
 
         var bucketWithClosestNodes = this.buckets.get(bucketIndex);
 
