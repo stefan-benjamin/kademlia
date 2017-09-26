@@ -14,12 +14,20 @@ html
         ul
             each val in ipAddresses
                 li= val
-  
+    br
+    div#resultDiv Enter node id
     input(type='text', id='nodeIdInput')
     button#nodeLookupButton Find Node
     br
-    div#resultDiv Enter node id
 
+    br 
+    div Key 
+     input(type='text', id='keyInput')
+    div Value   
+      input(type='text', id='valueInput')
+    button#storeButton Store
+    div#storeResultDiv
+    
     br
     
     h2 Buckets (#{buckets.length}):
@@ -30,3 +38,9 @@ html
                     each node in bucket.nodes
                         li NodeId: #{node.nodeId} IP: #{node.ipAddress} Port: #{node.port}  
                             a(href='http://' + node.ipAddress + ':' + node.port) Go to node
+     
+     br
+     h2 Stored values (#{storedValues.length}):
+        ul
+            each value in storedValues
+                li Key:  #{storedValues.key} , value #{storedValues.value}.
