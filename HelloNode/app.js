@@ -162,6 +162,15 @@ app.get('/api/findvalue', function (req, res) {
    }
 });
 
+app.get('/api/internal/valuelookup', function (req, res) {
+   var targetValueKey = req.query.targetValueKey;
+
+
+
+   res.send({ result: { a: targetValueKey, b: 2 } });
+});
+
+
 app.get('/api/internal/nodelookup', function (req, res) {
    var calledNodes = new Map();
    
@@ -188,7 +197,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
       var maxIndex = Math.min(bucketResult.content.length, constants.alpha);
 
       for (var i = 0; i < maxIndex; i++) {
-         var nodeIpAddress = bucketResult.content[i].ipAddress;
+         var nodeIpAddress = bucketResult.content[i].ipAddress;   
          var nodePort = bucketResult.content[i].port;
          var nodeId = bucketResult.content[i].nodeId;
 
@@ -226,9 +235,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
                runningQueries--;
 
             })
-         }
-
-         
+         }         
       }
 
       if (resultFound)

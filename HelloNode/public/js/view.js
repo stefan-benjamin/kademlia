@@ -11,7 +11,21 @@
          $("#resultDiv").empty().append(JSON.stringify(resultData.result));
 
       });
-    });
+   });
+
+
+   $("#valueLookupButton").click(function () {
+      console.log("Value lookup button clicked");
+
+      var targetValueKey = $("#valueKeyInput").val();
+
+      var queryData = { targetValueKey: targetValueKey }
+
+      $.getJSON("/api/internal/valuelookup", queryData, function (resultData) {
+         $("#valueResultDiv").empty().append(JSON.stringify(resultData.result));
+
+      });
+   });
 
    $("#storeButton").click(function () {
        console.log("Store button clicked");
