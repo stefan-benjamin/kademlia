@@ -14,5 +14,11 @@
       });
    });
 
+   $('#envReadButton').click(function () {
+       $.getJSON('/sensors/enviroment', data, function (resultData) {
+           $("#resultDiv").empty().append(JSON.stringify(resultData.result));
+       });
+   });
+
 });
 
