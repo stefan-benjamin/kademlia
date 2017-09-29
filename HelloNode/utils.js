@@ -31,15 +31,22 @@ exports.getDistance = function (id1, id2) {
 
 exports.convertIPv6ToIPv4 = function (ipv6Address) {
 
-    if (ipaddr.IPv6.isValid(ipv6Address)) {
-        var parsedAddress = ipaddr.parse(ipv6Address);
-        return parsedAddress.toIPv4Address().toString();
-    }
-    //If it is an ipv4, simply return it
-    else if (ipaddr.IPv4.isValid(ipv6Address)) {
-        return ipv6Address;
-    }
-    else {
-        return false;
-    }
-}
+   if (ipaddr.IPv6.isValid(ipv6Address)) {
+      var parsedAddress = ipaddr.parse(ipv6Address);
+      return parsedAddress.toIPv4Address().toString();
+   }
+   //If it is an ipv4, simply return it
+   else if (ipaddr.IPv4.isValid(ipv6Address)) {
+      return ipv6Address;
+   }
+   else {
+      return false;
+   }
+};
+
+exports.createHash = function (inputText) {
+   var crypto = require('crypto');
+   var cryptoObject = crypto.createHash('sha1');
+   cryptoObject.update(inputText);
+   return cryptoObject.digest("hex").substr(0, constants.B);
+};
