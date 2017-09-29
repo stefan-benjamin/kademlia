@@ -30,10 +30,12 @@ app.use(express.static(__dirname + '/public'));
 app.listen(globals.portNumber);
 console.log("Listening on port " + globals.portNumber);
 
-var crypto = require('crypto');
-var nodeIdCrypto = crypto.createHash('sha1');
-nodeIdCrypto.update(globals.ipAddresses + globals.portNumber);
-globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+//var crypto = require('crypto');
+//var nodeIdCrypto = crypto.createHash('sha1');
+//nodeIdCrypto.update(globals.ipAddresses + globals.portNumber);
+//globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+
+globals.nodeId = utils.createHash(globals.ipAddresses + globals.portNumber);
 
 console.log("Node id: " + globals.nodeId);
 
@@ -112,9 +114,12 @@ app.post('/api/store', function (req, res) {
    
    console.log('Store received from ' + senderId);
 
+   var keyHash = utils.createHash(key);
+
    if (forward) {
-      //find closest nodes
-      var result = bm.getClosestNodes(globals.nodeId);
+      //find closest nodes to the given key      
+
+      var result = bm.getClosestNodes(keyHash);
 
       //call store on the k closest nodes - without further forwarding
       if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
@@ -128,7 +133,7 @@ app.post('/api/store', function (req, res) {
    else
    {
       //the call is not coming from the GUI, the value needs to be stored.
-      storedValues.set(key, value);
+      storedValues.set(keyHash, value);
    }
 
    res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
@@ -142,14 +147,16 @@ app.get('/api/findvalue', function (req, res) {
 
    console.log('FindValue received from ' + senderId);
 
-   if (storedValues.has(key))
+   var keyHash = utils.createHash(key);
+
+   if (storedValues.has(keyHash))
    {
-      res.send ( { key: key, value: storedValues.get(key) } );
+      res.send({ key: key, value: storedValues.get(keyHash) } );
    }
    else
    {
       //find closest nodes
-      var result = bm.getClosestNodes(globals.nodeId);
+      var result = bm.getClosestNodes(keyHash);
 
       res.send({ senderId: senderId, nodeId: globals.nodeId, result: result });
    }
@@ -235,11 +242,10 @@ app.get('/api/internal/nodelookup', function (req, res) {
 //THIS IS A TEST - TO BE REMOVED
 
 // Get distance between this node and another random node
-nodeIdCrypto = crypto.createHash('sha1');
-nodeIdCrypto.update("RANDOM 2");
-var randomNodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
+var randomNodeId = utils.createHash("RANDOM 2");
 console.log("Random node Id: " + randomNodeId);
 console.log(utils.getDistance(globals.nodeId, randomNodeId));
+
 //bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
 //bm.getClosestNodes(randomNodeId);
 
