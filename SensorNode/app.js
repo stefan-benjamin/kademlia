@@ -31,12 +31,19 @@ app.get('/', function (req, res) {
 app.post('/actuators/led', function (req, res) {
    var ledValue = parseInt(req.body.value);
 
-   gpioInterface.writeToPin4(ledValue);
+   gpioInterface.writeToPin17(ledValue);
    res.send();
 });
 
 app.get('/actuators/led', function (req, res) {
-   var pin4Value = gpioInterface.readFromPin4();
+   var pin4Value = gpioInterface.readFromPin17();
 
    res.send({ led: pin4Value });
+});
+
+app.get('/sensors/environment', function (req, res) {
+
+   var sensorValue = gpioInterface.getEnvSensorData();
+
+   res.send(sensorValue);
 });
