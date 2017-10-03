@@ -18,6 +18,8 @@ app.use(express.static(__dirname + '/public'));
 
 globals.ipAddresses = utils.getIpAddresses();
 console.log("IP addresses: " + globals.ipAddresses);
+globals.nodeId = utils.createHash(globals.ipAddresses + globals.portNumber);
+console.log("NodeId: " + globals.nodeId);
 
 app.listen(globals.portNumber);
 console.log("Listening on port " + globals.portNumber);
