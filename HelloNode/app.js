@@ -64,7 +64,7 @@ app.get('/', function (req, res) {
       storedValuesArray.push(storedValueJson);
    })
 
-   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets, storedValues: storedValuesArray, historicalValues: historicalValues });
+   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets, storedValues: storedValuesArray, historicalValues: historicalValues, sensorIpAddress: globals.sensorNodeIpAddress, sensorPortNumber: globals.sensorNodePortNumber });
 });
 
 app.post('/api/ping', function (req, res) {
@@ -138,7 +138,7 @@ app.post('/api/store', function (req, res) {
 
    //store the value locally
    //storedValues.set(keyHash, value);
-   
+
    res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
 });
 
@@ -183,7 +183,7 @@ app.get('/api/internal/valuelookup', function (req, res) {
 
    //the bucket manager cannot return constants.GET_CLOSEST_NODE_FOUND_THE_NODE
    //it will return a list of known nodes - close to the key hash.
-   
+
    _findValueIterative(bucketResult, targetKey)
 
    function _findValueIterative(bucketResult, targetKey) {
@@ -297,26 +297,32 @@ app.get('/api/internal/nodelookup', function (req, res) {
 
 });
 
-app.post('/register/', function (req, res) {
-    var nodeId = req.body.nodeId;
+app.post('/api/wot/register/', function (req, res) {
+   var nodeId = req.body.nodeId;
 
-    var closestNodes = bm.getClosestNodes(nodeId);
+   var closestNodes = bm.getClosestNodes(nodeId);
 
-    if (closestNode.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
-        var targetNode = closestNodes.content;
+   if (closestNodes.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET && closestNodes.content[0]) {
+      var targetNode = closestNodes.content[0];
+   }
+   else if (closestNodes.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
+      var targetNode = closestNodes.content;
+   }
 
-        pinger.takeSensorResponsibility(
-            targetNode.ipAddress,
-            targetNode.port,
-            req.socket.remoteAddress,
-            req.body.port,
-            function (data) {
-                console.log("Success");
-            },
-            function (data) {
-                console.log("There was an error");
-            });
-    }
+   pinger.takeSensorResponsibility(
+   targetNode.ipAddress,
+      targetNode.port,
+      nodeId,
+      utils.convertIPv6ToIPv4(req.socket.remoteAddress),
+      req.body.nodePort,
+      function (data) {
+         console.log("Success" + req.body.nodePort);
+      },
+      function (data) {
+         console.log("There was an error");
+      });
+
+   res.send();
 });
 
 
@@ -331,32 +337,36 @@ app.post('/api/wot/takeSensorResponsibility', function (req, res) {
 
    console.log("Generating key for the sensor data...");
 
-   gloabls.sensorDataKey = globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi;
-   gloabls.sensorDataKeyHash = utils.createHash(globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi);
-   
-   setInterval(getSensorData( sensorIpAddress, sensorPortNumber ), 5000);
+   globals.sensorDataKey = globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi;
+   globals.sensorDataKeyHash = utils.createHash(globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi);
+
+   setInterval(getSensorData, 5000);
+
+   res.send();
 });
 
-function getSensorData(ipAddress, portNumber) {
+function getSensorData() {
    console.log("Getting sensor data...");
-   
-   pinger.getSensorValue(globals.sensorNodeIpAddress, globals.sensorNodePortNumber, gloabls.sensorNodeApi, function (data) {
+
+   pinger.getSensorValue(globals.sensorNodeIpAddress, globals.sensorNodePortNumber, globals.sensorNodeApi, function (data) {
 
       //find closest nodes to the given key     
-      var result = bm.getClosestNodes(gloabls.sensorDataKeyHash);
+      var result = bm.getClosestNodes(globals.sensorDataKeyHash);
 
       //call store on the k closest nodes - without further forwarding
       if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
 
          result.content.forEach(function (node) {
 
-            pinger.store(node.ipAddress, node.port, false, sensorDataKey, data, function () { }, function () { });
+            pinger.store(node.ipAddress, node.port, false, globals.sensorDataKey, data, function () { }, function () { });
          });
       }
    }, function () {
 
    });
 }
+   
+
 
 
 //THIS IS A TEST - TO BE REMOVED

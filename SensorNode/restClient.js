@@ -11,7 +11,7 @@ exports.register = function (ipAddress, portNumber, callback, errorCallback) {
         headers: { "Content-Type": "application/json" }
     };
 
-    var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/register", args, function (data, response) {
+    var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/api/wot/register/", args, function (data, response) {
         // parsed response body as js object 
         console.log("WoT_REST_CLIENT: Callback received from " + ipAddress + " on port " + portNumber);
 

@@ -10,6 +10,11 @@ html
     h2 Listening port: #{localPort}
     h3 Initial node IP: #{initialNodeIp}
     h3 Initial node port: #{initialNodePort}
+    br
+    h3 Sensor responsability: 
+        a(href='http://' + sensorIpAddress + ':' + sensorPortNumber) Go to node
+
+
     h2 Network IP (#{ipAddresses.length}):
         ul
             each val in ipAddresses
@@ -49,7 +54,7 @@ html
     h2 Stored values (#{storedValues.length}):
         ul
             each value in storedValues
-                li Key:  #{value.key}, Value #{value.value}.
+                li Key:  #{value.key}, Value #{value.value}|#{value.value}.
 
 
     br

@@ -102,28 +102,26 @@ exports.findValue = function (ipAddress, portNumber, targetKey, callback, errorC
 
 
 exports.takeSensorResponsibility = function (ipAddress, portNumber, sensorNodeId, sensorIpAddress, sensorPortNumber, callback, errorCallback) {
-   //console.log("REST_CLIENT: Calling findValue on node with ip: " + ipAddress + " on port " + portNumber);
+   console.log("REST_CLIENT: Calling takeSensorResponsibility on node with ip: " + ipAddress + " on port " + portNumber);
 
-   //var args = {
-   //   parameters: { senderId: globals.nodeId, targetKey: targetKey },
-   //   headers: { "Content-Type": "application/json" }
-   //};
+   var args = {
+      data: { senderId: globals.nodeId, sensorNodeId: sensorNodeId, sensorIpAddress: sensorIpAddress, sensorPortNumber: sensorPortNumber },
+      headers: { "Content-Type": "application/json" }
+   };
 
-   //var req = restClient.get("http://" + ipAddress + ":" + portNumber + "/api/findvalue", args, function (data, response) {
-   //   // parsed response body as js object 
-   //   console.log("REST_CLIENT: Findvalue result received from " + ipAddress + " on port " + portNumber + "DATA: " + data);
+   var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/api/wot/takeSensorResponsibility", args, function (data, response) {
+      // parsed response body as js object 
+      console.log("REST_CLIENT: takeSensorResponsibility result received from " + ipAddress + " on port " + portNumber );
+      
+      callback({ requestedIpAddress: ipAddress, requestedPort: portNumber });
+   }
+   );
 
+   req.on('error', function (err) {
+      console.log("REST_CLIENT: Error while calling takeResponsibility on " + ipAddress + " on port " + portNumber);
 
-
-   //   callback({ nodeId: data.nodeId, key: data.key, value: data.value, result: data.result, requestedIpAddress: ipAddress, requestedPort: portNumber });
-   //}
-   //);
-
-   //req.on('error', function (err) {
-   //   console.log("REST_CLIENT: Error while calling Findvalue on " + ipAddress + " on port " + portNumber);
-
-   //   errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
-   //});
+      errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   });
 }
 
 

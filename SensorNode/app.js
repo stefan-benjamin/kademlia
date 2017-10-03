@@ -32,7 +32,7 @@ app.set('view engine', 'pug');
 //Call register
 var regResult = restClient.register(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
     console.log("Registering..")
-});
+}, function () { });
 
 app.get('/', function (req, res) {
    console.log(app.mountpath);
