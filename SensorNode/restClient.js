@@ -15,13 +15,13 @@ exports.register = function (ipAddress, portNumber, callback, errorCallback) {
         // parsed response body as js object 
         console.log("WoT_REST_CLIENT: Callback received from " + ipAddress + " on port " + portNumber);
 
-        //callback({ nodeId: data.nodeId, requestedIpAddress: ipAddress, requestedPort: portNumber });
+        callback({ nodeId: data.nodeId, requestedIpAddress: ipAddress, requestedPort: portNumber });
     }
     );
 
     req.on('error', function (err) {
         console.log("WoT_REST_CLIENT: Error while registering " + ipAddress + " on port " + portNumber);
 
-        //errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
+        errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
     });
 };

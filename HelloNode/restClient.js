@@ -99,3 +99,29 @@ exports.findValue = function (ipAddress, portNumber, targetKey, callback, errorC
       errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
    });
 }
+
+
+exports.takeSensorResponsibility = function (ipAddress, portNumber, sensorNodeId, sensorIpAddress, sensorPortNumber, callback, errorCallback) {
+   //console.log("REST_CLIENT: Calling findValue on node with ip: " + ipAddress + " on port " + portNumber);
+
+   //var args = {
+   //   parameters: { senderId: globals.nodeId, targetKey: targetKey },
+   //   headers: { "Content-Type": "application/json" }
+   //};
+
+   //var req = restClient.get("http://" + ipAddress + ":" + portNumber + "/api/findvalue", args, function (data, response) {
+   //   // parsed response body as js object 
+   //   console.log("REST_CLIENT: Findvalue result received from " + ipAddress + " on port " + portNumber + "DATA: " + data);
+
+
+
+   //   callback({ nodeId: data.nodeId, key: data.key, value: data.value, result: data.result, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   //}
+   //);
+
+   //req.on('error', function (err) {
+   //   console.log("REST_CLIENT: Error while calling Findvalue on " + ipAddress + " on port " + portNumber);
+
+   //   errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   //});
+}
