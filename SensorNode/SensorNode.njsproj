@@ -34,6 +34,12 @@
     <Compile Include="gpioInterface.js" />
     <Compile Include="public\js\jquery-3.2.1.js" />
     <Compile Include="public\js\view.js" />
+    <Compile Include="restClient.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="utils.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\index.pug" />

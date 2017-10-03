@@ -4,7 +4,9 @@ console.log('Starting node...');
 
 var constants = require('./constants');
 var globals = require('./globals');
+var utils = require('./utils');
 var gpioInterface = require('./gpioInterface');
+var restClient = require('./restClient');
 
 var express = require('express');
 const bodyParser = require('body-parser');
@@ -14,6 +16,9 @@ app.use(bodyParser.json())
 
 app.use(express.static(__dirname + '/public'));
 
+globals.ipAddresses = utils.getIpAddresses();
+console.log("IP addresses: " + globals.ipAddresses);
+
 app.listen(globals.portNumber);
 console.log("Listening on port " + globals.portNumber);
 
@@ -21,6 +26,11 @@ console.log("Listening on port " + globals.portNumber);
 var path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+//Call register
+var regResult = restClient.register(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
+    console.log("Registering..")
+});
 
 app.get('/', function (req, res) {
    console.log(app.mountpath);
@@ -36,9 +46,9 @@ app.put('/actuators/led', function (req, res) {
 });
 
 app.get('/actuators/led', function (req, res) {
-   var pin4Value = gpioInterface.readFromPin17();
+   var pin17Value = gpioInterface.readFromPin17();
 
-   res.send({ led: pin4Value });
+   res.send({ led: pin17Value });
 });
 
 app.get('/sensors/environment', function (req, res) {
