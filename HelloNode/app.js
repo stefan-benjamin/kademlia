@@ -48,6 +48,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 var storedValues = new Map();
+var historicalValues = [];
 
 
 app.get('/', function (req, res) {
@@ -63,7 +64,7 @@ app.get('/', function (req, res) {
       storedValuesArray.push(storedValueJson);
    })
 
-   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets, storedValues: storedValuesArray });
+   res.render('index', { nodeId: globals.nodeId, ipAddresses: globals.ipAddresses, localPort: globals.portNumber, initialNodeIp: globals.initialNodeIpAddress, initialNodePort: globals.initialNodePortNumber, buckets: buckets, storedValues: storedValuesArray, historicalValues: historicalValues });
 });
 
 app.post('/api/ping', function (req, res) {
@@ -132,6 +133,7 @@ app.post('/api/store', function (req, res) {
    }
    else {
       storedValues.set(keyHash, value);
+      historicalValues.push({ keyHash: keyHash, timeStamp: new Date().toUTCString(), value: value });
    }
 
    //store the value locally

@@ -50,3 +50,10 @@ html
         ul
             each value in storedValues
                 li Key:  #{value.key}, Value #{value.value}.
+
+
+    br
+    h2 Historical values (#{historicalValues.length}):
+        ul
+            each value in historicalValues
+                li Key:  #{value.keyHash}, Timestamp: #{value.timeStamp}, Value #{value.value}.
