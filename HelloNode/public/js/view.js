@@ -22,7 +22,7 @@
       var queryData = { targetValueKey: targetValueKey }
 
       $.getJSON("/api/internal/valuelookup", queryData, function (resultData) {
-         $("#valueResultDiv").empty().append(JSON.stringify(resultData.result));
+         $("#valueResultDiv").empty().append(JSON.stringify(resultData));
 
       });
    });
