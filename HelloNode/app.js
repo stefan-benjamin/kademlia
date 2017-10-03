@@ -321,6 +321,43 @@ app.post('/register/', function (req, res) {
 
 
 
+app.post('/api/wot/takeSensorResponsibility', function (req, res) {
+
+   var senderId = req.body.senderId;
+   var sensorNodeId = req.body.sensorNodeId;
+
+   globals.sensorNodeIpAddress = req.body.sensorIpAddress;
+   globals.sensorNodePortNumber = req.body.sensorPortNumber;
+
+   console.log("Generating key for the sensor data...");
+
+   gloabls.sensorDataKey = globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi;
+   gloabls.sensorDataKeyHash = utils.createHash(globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi);
+   
+   setInterval(getSensorData( sensorIpAddress, sensorPortNumber ), 5000);
+});
+
+function getSensorData(ipAddress, portNumber) {
+   console.log("Getting sensor data...");
+   
+   pinger.getSensorValue(globals.sensorNodeIpAddress, globals.sensorNodePortNumber, gloabls.sensorNodeApi, function (data) {
+
+      //find closest nodes to the given key     
+      var result = bm.getClosestNodes(gloabls.sensorDataKeyHash);
+
+      //call store on the k closest nodes - without further forwarding
+      if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
+
+         result.content.forEach(function (node) {
+
+            pinger.store(node.ipAddress, node.port, false, sensorDataKey, data, function () { }, function () { });
+         });
+      }
+   }, function () {
+
+   });
+}
+
 
 //THIS IS A TEST - TO BE REMOVED
 

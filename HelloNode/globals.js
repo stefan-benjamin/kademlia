@@ -5,5 +5,11 @@
    initialNodeIpAddress: '127.0.0.1',
    initialNodePortNumber: 8080,
    nodeId: null,
-   ipAddresses: null
+   ipAddresses: null,
+
+   sensorNodeIpAddress: null,
+   sensorNodePortNumber: null,
+   sensorNodeApi: '/sensors/environment',
+   sensorDataKey: null,
+   sensorDataKeyHash: null
 }

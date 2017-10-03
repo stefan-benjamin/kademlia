@@ -125,3 +125,29 @@ exports.takeSensorResponsibility = function (ipAddress, portNumber, sensorNodeId
    //   errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
    //});
 }
+
+
+exports.getSensorValue = function (ipAddress, portNumber, api, callback, errorCallback) {
+   console.log("REST_CLIENT: Calling getValue on sensor node with ip: " + ipAddress + " on port " + portNumber);
+
+   var args = {
+      parameters: { senderId: globals.nodeId },
+      headers: { "Content-Type": "application/json" }
+   };
+
+   var req = restClient.get("http://" + ipAddress + ":" + portNumber + api, args, function (data, response) {
+      // parsed response body as js object 
+      console.log("REST_CLIENT: GetValue result received from " + ipAddress + " on port " + portNumber);
+      
+      callback({ sensorData: data, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   }
+   );
+
+   req.on('error', function (err) {
+      console.log("REST_CLIENT: Error while calling GetValue on " + ipAddress + " on port " + portNumber);
+
+      errorCallback({ error: err, requestedIpAddress: ipAddress, requestedPort: portNumber });
+   });
+}
+
+
