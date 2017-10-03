@@ -28,7 +28,7 @@ app.get('/', function (req, res) {
    res.render('index', {});
 });
 
-app.post('/actuators/led', function (req, res) {
+app.put('/actuators/led', function (req, res) {
    var ledValue = parseInt(req.body.value);
 
    gpioInterface.writeToPin17(ledValue);

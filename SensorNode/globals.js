@@ -2,5 +2,5 @@
 
    //Default value, used when debugging in VS.
    portNumber : 8080,
-   useGpio: true
+   useGpio: false
 }

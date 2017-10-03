@@ -1,17 +1,11 @@
 ﻿$(document).ready(function () {
    
    $('#ledOffButton').click(function () {
-      var data = { value: 0 };
-      $.post('/actuators/led', data, function (resp) {
-         
-      });
+      sendLedChangeRequest(0);
    });
 
    $('#ledOnButton').click(function () {
-      var data = { value: 1 };
-      $.post('/actuators/led', data, function (resp) {
-
-      });
+      sendLedChangeRequest(1);
    });
 
    $('#envReadButton').click(function () {
@@ -19,6 +13,24 @@
          $("#resultDiv").empty().append(JSON.stringify(resultData));
       });
    });
+
+   function sendLedChangeRequest(value)
+   {
+      var data = { value: value };
+
+      $.ajax({
+         url: '/actuators/led',
+         method: 'PUT',
+         data: JSON.stringify(data),
+         contentType: 'application/json',
+         success: function (result) {
+            // handle success
+         },
+         error: function (request, msg, error) {
+            // handle failure
+         }
+      });
+   }
 
 });
 
