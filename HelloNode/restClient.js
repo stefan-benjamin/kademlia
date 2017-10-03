@@ -31,11 +31,11 @@ exports.findNode = function (ipAddress, portNumber, targetNodeId, callback, erro
    console.log("REST_CLIENT: Calling find_node on node with ip: " + ipAddress + " on port " + portNumber + ". Target node id: " + targetNodeId);
 
    var args = {
-      data: { senderId: globals.nodeId, senderPort: globals.portNumber, targetNodeId : targetNodeId },
+      parameters: { senderId: globals.nodeId, senderPort: globals.portNumber, targetNodeId : targetNodeId },
       headers: { "Content-Type": "application/json" }
    };
 
-   var req = restClient.post("http://" + ipAddress + ":" + portNumber + "/api/findnode", args, function (data, response) {
+   var req = restClient.get("http://" + ipAddress + ":" + portNumber + "/api/findnode", args, function (data, response) {
       // parsed response body as js object 
       console.log("REST_CLIENT: FindNode result received from " + ipAddress + " on port " + portNumber);
 

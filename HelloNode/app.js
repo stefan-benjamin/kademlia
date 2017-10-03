@@ -83,11 +83,11 @@ app.post('/api/ping', function (req, res) {
    res.send({ senderId: senderId, nodeId: globals.nodeId });
 });
 
-app.post('/api/findnode', function (req, res) {
+app.get('/api/findnode', function (req, res) {
 
-   var senderId = req.body.senderId;
-   var senderPort = req.body.senderPort;
-   var targetNodeId = req.body.targetNodeId;
+   var senderId = req.query.senderId;
+   var senderPort = req.query.senderPort;
+   var targetNodeId = req.query.targetNodeId;
 
    //The IP address of the sender needs to be retrieved from the query itself.
    var senderIpAddress = req.socket.remoteAddress;
@@ -136,7 +136,7 @@ app.post('/api/store', function (req, res) {
 
    //store the value locally
    //storedValues.set(keyHash, value);
-
+   
    res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
 });
 
