@@ -8,7 +8,6 @@ var pinger = require('./restClient');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
-var register = require('./register');
 
 if (process.argv[2] && process.argv[3] && process.argv[4]) {
    globals.portNumber = process.argv[2];
@@ -299,9 +298,26 @@ app.get('/api/internal/nodelookup', function (req, res) {
 });
 
 app.post('/register/', function (req, res) {
-    var register = new register(pinger, bm);
-    register.registerNewEntry('insertnodehere');
-}
+    var nodeId = req.body.nodeId;
+
+    var closestNodes = bm.getClosestNodes(nodeId);
+
+    if (closestNode.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
+        var targetNode = closestNodes.content;
+
+        pinger.takeSensorResponsibility(
+            targetNode.ipAddress,
+            targetNode.port,
+            req.socket.remoteAddress,
+            req.body.port,
+            function (data) {
+                console.log("Success");
+            },
+            function (data) {
+                console.log("There was an error");
+            });
+    }
+});
 
 
 
