@@ -8,6 +8,7 @@ var pinger = require('./restClient');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
+var register = require('./register');
 
 if (process.argv[2] && process.argv[3] && process.argv[4]) {
    globals.portNumber = process.argv[2];
@@ -296,6 +297,12 @@ app.get('/api/internal/nodelookup', function (req, res) {
    }
 
 });
+
+app.post('/register/', function (req, res) {
+    var register = new register(pinger, bm);
+    register.registerNewEntry('insertnodehere');
+}
+
 
 //THIS IS A TEST - TO BE REMOVED
 
