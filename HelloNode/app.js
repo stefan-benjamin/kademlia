@@ -200,7 +200,7 @@ app.get('/api/internal/valuelookup', function (req, res) {
                calledNodes.set(data.nodeId);
                runningQueries--;
 
-               if (data.key && data.value) //a result has been found
+               if (data.key && data.value && !resultFound) //the first result has been found
                {
                   res.send({ key: data.key, value: data.value });
                   resultFound = true;
