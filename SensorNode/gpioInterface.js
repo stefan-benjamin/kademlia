@@ -1,4 +1,5 @@
 ﻿var globals = require('./globals');
+var fs = require('fs')
 
 setInterval(readSensorData, 3000);
 
@@ -32,11 +33,21 @@ exports.getEnvSensorData = function () {
 }
 
 function readSensorData() {
-   console.log("Reading sensor data...");
+   //console.log("Reading sensor data...");
 
    if (globals.useGpio) {
       sensor.read(22, 4, function (err, temperature, humidity) {
          sensorData = { temperature: temperature, humidity: humidity };
-      });
+       });
+   }
+   if (globals.noSensors) {
+       fs.readFile('/sys/class/thermal/thermal_zone0/temp', 'utf8', function (err, data) {
+           if (err) {
+               return console.log(err);
+           }
+           sensorData = { temperature: data.substr(0, 5), humidity: 0 };
+           console.log(data.substr(0, 5));
+       });
    }
 }
+
