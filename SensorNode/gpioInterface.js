@@ -39,15 +39,12 @@ function readSensorData() {
       sensor.read(22, 4, function (err, temperature, humidity) {
          sensorData = { temperature: temperature, humidity: humidity };
        });
+   } else {
+       sensorData = { temperature: randomNo(10, 30), humidity: randomNo(0, 100) };
    }
-   if (globals.noSensors) {
-       fs.readFile('/sys/class/thermal/thermal_zone0/temp', 'utf8', function (err, data) {
-           if (err) {
-               return console.log(err);
-           }
-           sensorData = { temperature: data.substr(0, 5), humidity: 0 };
-           console.log(data.substr(0, 5));
-       });
-   }
+}
+
+function randomNo(low, high) {
+    return Math.floor(Math.random() * (high - low + 1) + low);
 }
 

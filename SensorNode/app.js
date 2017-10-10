@@ -1,12 +1,18 @@
 'use strict';
 
-console.log('Starting node...');
+console.log('Starting sensor node...');
 
 var constants = require('./constants');
 var globals = require('./globals');
 var utils = require('./utils');
 var gpioInterface = require('./gpioInterface');
 var restClient = require('./restClient');
+
+if (process.argv[2] && process.argv[3] && process.argv[4]) {
+    globals.portNumber = process.argv[2];
+    globals.initialNodeIpAddress = process.argv[3];
+    globals.initialNodePortNumber = process.argv[4];
+}
 
 var express = require('express');
 const bodyParser = require('body-parser');
