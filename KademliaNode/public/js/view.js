@@ -40,6 +40,5 @@
            $("#storeResultDiv").empty().append(resp)
        });
    });
-
 });
 

@@ -2,7 +2,6 @@
 var xor = require('buffer-xor');
 var ipaddr = require('ipaddr.js');
 
-
 exports.getIpAddresses = function () {
    var os = require('os');
 
@@ -16,7 +15,6 @@ exports.getIpAddresses = function () {
          }
       }
    }
-
    return addresses;
 };
 
@@ -29,15 +27,15 @@ exports.getDistance = function (id1, id2) {
 };
 
 
-exports.convertIPv6ToIPv4 = function (ipv6Address) {
+exports.convertIPv6ToIPv4 = function (ipAddress) {
 
-   if (ipaddr.IPv6.isValid(ipv6Address)) {
-      var parsedAddress = ipaddr.parse(ipv6Address);
+   if (ipaddr.IPv6.isValid(ipAddress)) {
+      var parsedAddress = ipaddr.parse(ipAddress);
       return parsedAddress.toIPv4Address().toString();
    }
    //If it is an ipv4, simply return it
-   else if (ipaddr.IPv4.isValid(ipv6Address)) {
-      return ipv6Address;
+   else if (ipaddr.IPv4.isValid(ipAddress)) {
+      return ipAddress;
    }
    else {
       return false;

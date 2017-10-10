@@ -43,11 +43,13 @@ class Bucket extends Map {
       }
    }
 
+   //Gets the json representation of a node with the given nodeId
    getFull(nodeId)
    {
       return { nodeId: nodeId, ipAddress: super.get(nodeId).ip, port: super.get(nodeId).port }
    }
 
+   //Converts the internal bucket map to a json array representation.
    toJson() {
       
       var bucketNodesArray = [];

@@ -4,7 +4,7 @@ console.log('Starting node...');
 
 var constants = require('./constants');
 var globals = require('./globals');
-var pinger = require('./restClient');
+var restClient = require('./restClient');
 var utils = require('./utils');
 var bucket = require('./bucket');
 var bucketmanager = require('./bucketManager');
@@ -21,7 +21,7 @@ console.log("IP addresses: " + globals.ipAddresses);
 
 var express = require('express');
 const bodyParser = require('body-parser');
-var app = express(); // the main app
+var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
@@ -30,19 +30,14 @@ app.use(express.static(__dirname + '/public'));
 app.listen(globals.portNumber);
 console.log("Listening on port " + globals.portNumber);
 
-//var crypto = require('crypto');
-//var nodeIdCrypto = crypto.createHash('sha1');
-//nodeIdCrypto.update(globals.ipAddresses + globals.portNumber);
-//globals.nodeId = nodeIdCrypto.digest("hex").substr(0, constants.B);
-
 globals.nodeId = utils.createHash(globals.ipAddresses + globals.portNumber);
 
 console.log("Node id: " + globals.nodeId);
 
-//Create a BucketManager
+// Create a BucketManager
 var bm = new bucketmanager();
 
-// view engine setup
+// Wiew engine setup
 var path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -53,11 +48,10 @@ var historicalValues = [];
 
 app.get('/', function (req, res) {
    console.log(app.mountpath);
-   //res.send('App Homepage');
    var buckets = bm.getBuckets();
 
    var storedValuesArray = [];
-   //iterate through the storedValues
+   //iterate through the storedValues and convert the map to an array
    storedValues.forEach(function (value, key, map) {
       var storedValueJson = { key: key, value: value };
 
@@ -119,15 +113,14 @@ app.post('/api/store', function (req, res) {
 
    if (forward) {
       //find closest nodes to the given key      
-
       var result = bm.getClosestNodes(keyHash);
 
-      //call store on the k closest nodes - without further forwarding
+      //Call store on the k closest nodes - without further forwarding
       if (result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
 
          result.content.forEach(function (node) {
 
-            pinger.store(node.ipAddress, node.port, false, key, value, function () { }, function () { });
+            restClient.store(node.ipAddress, node.port, false, key, value, function () { }, function () { });
          });
       }
    }
@@ -135,10 +128,7 @@ app.post('/api/store', function (req, res) {
       storedValues.set(keyHash, value);
       historicalValues.push({ keyHash: keyHash, timeStamp: new Date().toUTCString(), value: value });
    }
-
-   //store the value locally
-   //storedValues.set(keyHash, value);
-
+   
    res.send({ senderId: senderId, nodeId: globals.nodeId, success: true });
 });
 
@@ -172,7 +162,7 @@ app.get('/api/internal/valuelookup', function (req, res) {
 
    var targetValueKeyHash = utils.createHash(targetKey);
 
-   //look in its own storage
+   //look in its own storage for the given key hash
    if (storedValues.has(targetValueKeyHash)) {
       res.send({ key: targetKey, value: storedValues.get(targetValueKeyHash) });
       return;
@@ -183,7 +173,6 @@ app.get('/api/internal/valuelookup', function (req, res) {
 
    //the bucket manager cannot return constants.GET_CLOSEST_NODE_FOUND_THE_NODE
    //it will return a list of known nodes - close to the key hash.
-
    _findValueIterative(bucketResult, targetKey)
 
    function _findValueIterative(bucketResult, targetKey) {
@@ -198,7 +187,7 @@ app.get('/api/internal/valuelookup', function (req, res) {
             console.log("Making findValue call to " + nodeIpAddress + " on port " + nodePort);
             runningQueries++;
 
-            pinger.findValue(nodeIpAddress, nodePort, targetKey, function (data) {
+            restClient.findValue(nodeIpAddress, nodePort, targetKey, function (data) {
                calledNodes.set(data.nodeId);
                runningQueries--;
 
@@ -258,7 +247,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
          if (nodeId !== globals.nodeId && !calledNodes.has(nodeId)) { //don't call yourself remotely - local buckets are already handled.
             console.log("Making findNode call to " + nodeIpAddress + " on port " + nodePort);
             runningQueries++;
-            pinger.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
+            restClient.findNode(nodeIpAddress, nodePort, targetNodeId, function (data) {
                calledNodes.set(data.nodeId);
 
                var result = data.result;
@@ -266,7 +255,7 @@ app.get('/api/internal/nodelookup', function (req, res) {
 
                //check that we did not find the required value
                if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_THE_NODE) {
-                  //return data.result.content;
+                  
                   res.send({ result: data.result.content });
                   resultFound = true;
 
@@ -308,7 +297,7 @@ app.post('/api/wot/register/', function (req, res) {
       var targetNode = closestNodes.content;
    }
 
-   pinger.takeSensorResponsibility(
+   restClient.takeSensorResponsibility(
    targetNode.ipAddress,
       targetNode.port,
       nodeId,
@@ -323,8 +312,6 @@ app.post('/api/wot/register/', function (req, res) {
 
    res.send();
 });
-
-
 
 app.post('/api/wot/takeSensorResponsibility', function (req, res) {
 
@@ -347,7 +334,7 @@ app.post('/api/wot/takeSensorResponsibility', function (req, res) {
 function getSensorData() {
    console.log("Getting sensor data...");
 
-   pinger.getSensorValue(globals.sensorNodeIpAddress, globals.sensorNodePortNumber, globals.sensorNodeApi, function (data) {
+   restClient.getSensorValue(globals.sensorNodeIpAddress, globals.sensorNodePortNumber, globals.sensorNodeApi, function (data) {
 
       //find closest nodes to the given key     
       var result = bm.getClosestNodes(globals.sensorDataKeyHash);
@@ -357,56 +344,31 @@ function getSensorData() {
 
          result.content.forEach(function (node) {
 
-            pinger.store(node.ipAddress, node.port, false, globals.sensorDataKey, data, function () { }, function () { });
+            restClient.store(node.ipAddress, node.port, false, globals.sensorDataKey, data, function () { }, function () { });
          });
       }
    }, function () {
 
    });
 }
-   
-
-
-
-//THIS IS A TEST - TO BE REMOVED
-
-// Get distance between this node and another random node
-var randomNodeId = utils.createHash("RANDOM 2");
-console.log("Random node Id: " + randomNodeId);
-console.log(utils.getDistance(globals.nodeId, randomNodeId));
-
-//bm.receiveNode(randomNodeId, { ip: '192.168.2.1', port: 8080 });
-//bm.getClosestNodes(randomNodeId);
-
-//END: THIS IS A TEST - TO BE REMOVED
-
-// When we start, make a ping to the other known node. 
-var result = pinger.ping(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
+  
+// When the node is started, make a ping to the other known node. 
+var result = restClient.ping(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
    bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
 
    if (result.nodeId != globals.nodeId) {
-      pinger.findNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, result.nodeId, function (data) {
+      restClient.findNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, result.nodeId, function (data) {
          if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
-            //update your own bucket with the new nodes we know about
+            //update the buckets with the nodes received from the initial partner
             data.result.content.forEach(function (node) {
                bm.receiveNode(node.nodeId, { ip: node.ipAddress, port: node.port });
             });
          }
       }, function (error) {
-
+         console.log("FindNode to intial known node failed.");
       });
    }
 
 }, function () {
    console.log("Ping to intial known node failed");
 });
-
-
-
-
-
-
-
-
-
-
