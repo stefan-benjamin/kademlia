@@ -2,15 +2,16 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>HelloNode</Name>
-    <RootNamespace>HelloNode</RootNamespace>
+    <Name>WoTSensorNode</Name>
+    <RootNamespace>WoTSensorNode</RootNamespace>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>07757cd6-6e86-43f5-a9af-eb1e814dbd76</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectGuid>7c26e97a-0151-4d9c-8cf1-e919aa0cd90b</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
     <StartupFile>app.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
@@ -29,22 +30,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
-    <Compile Include="bucket.js">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="bucketManager.js">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="constants.js">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="globals.js">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="constants.js" />
+    <Compile Include="globals.js" />
+    <Compile Include="gpioInterface.js" />
     <Compile Include="public\js\jquery-3.2.1.js" />
-    <Compile Include="public\js\view.js">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="public\js\view.js" />
     <Compile Include="restClient.js">
       <SubType>Code</SubType>
     </Compile>
@@ -53,14 +43,12 @@
     </Compile>
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="views\index.pug">
-      <SubType>Code</SubType>
-    </Content>
+    <Content Include="views\index.pug" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\js\" />
-    <Folder Include="public\" />
     <Folder Include="views\" />
+    <Folder Include="public\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
