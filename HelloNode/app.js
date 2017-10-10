@@ -294,7 +294,6 @@ app.get('/api/internal/nodelookup', function (req, res) {
          return;
       }
    }
-
 });
 
 app.post('/api/wot/register/', function (req, res) {
@@ -384,6 +383,19 @@ console.log(utils.getDistance(globals.nodeId, randomNodeId));
 // When we start, make a ping to the other known node. 
 var result = pinger.ping(globals.initialNodeIpAddress, globals.initialNodePortNumber, function (result) {
    bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
+
+   if (result.nodeId != globals.nodeId) {
+      pinger.findNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, result.nodeId, function (data) {
+         if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
+            //update your own bucket with the new nodes we know about
+            data.result.content.forEach(function (node) {
+               bm.receiveNode(node.nodeId, { ip: node.ipAddress, port: node.port });
+            });
+         }
+      }, function (error) {
+
+      });
+   }
 
 }, function () {
    console.log("Ping to intial known node failed");
