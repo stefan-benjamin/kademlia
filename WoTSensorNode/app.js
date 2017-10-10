@@ -9,9 +9,9 @@ var gpioInterface = require('./gpioInterface');
 var restClient = require('./restClient');
 
 if (process.argv[2] && process.argv[3] && process.argv[4]) {
-    globals.portNumber = process.argv[2];
-    globals.initialNodeIpAddress = process.argv[3];
-    globals.initialNodePortNumber = process.argv[4];
+   globals.portNumber = process.argv[2];
+   globals.initialNodeIpAddress = process.argv[3];
+   globals.initialNodePortNumber = process.argv[4];
 }
 
 var express = require('express');
@@ -35,14 +35,16 @@ var path = require('path');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-//Call register
+//Call register on the initial known node
 var regResult = restClient.register(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
-    console.log("Registering..")
-}, function () { });
+   console.log("Trying to register as a WoT sensor on the network. Accessing node on " + globals.initialNodeIpAddress + ", port:" + globals.initialNodePortNumber);
+}, function () {
+   console.lol("Error occurred while registering on the network.");
+});
 
 app.get('/', function (req, res) {
    console.log(app.mountpath);
-   
+
    res.render('index', {});
 });
 

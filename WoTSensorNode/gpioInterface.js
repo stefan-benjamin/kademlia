@@ -5,7 +5,6 @@ setInterval(readSensorData, 3000);
 
 sensorData = { temperature: -100, humidity: -100 };
 
-
 if (globals.useGpio) {
    var sensor = require('node-dht-sensor');
    var onoff = require('onoff');
@@ -33,8 +32,6 @@ exports.getEnvSensorData = function () {
 }
 
 function readSensorData() {
-   //console.log("Reading sensor data...");
-
    if (globals.useGpio) {
       sensor.read(22, 4, function (err, temperature, humidity) {
          sensorData = { temperature: temperature, humidity: humidity };
@@ -47,4 +44,3 @@ function readSensorData() {
 function randomNo(low, high) {
     return Math.floor(Math.random() * (high - low + 1) + low);
 }
-

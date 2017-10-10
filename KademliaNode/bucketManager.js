@@ -109,7 +109,7 @@ class BucketManager {
       var appropriateBucket = this._selectBucketForInserting(nodeId);
 
       if (appropriateBucket === constants.ERROR_SELECT_BUCKET_DISTANCE_IS_ZERO) {
-         console.log("WARNING: Unable to add myself to a bucket.");
+         console.log("INFO: Unable to add the current node to a bucket.");
          return false;
       }
 
