@@ -32,7 +32,7 @@ console.log("Listening on port " + globals.portNumber);
 
 globals.nodeId = utils.createHash(globals.ipAddresses + globals.portNumber);
 
-console.log("Node id: " + globals.nodeId);
+console.log("Current node id: " + globals.nodeId);
 
 // Create a BucketManager
 var bm = new bucketmanager();
@@ -47,7 +47,6 @@ var historicalValues = [];
 
 
 app.get('/', function (req, res) {
-   console.log(app.mountpath);
    var buckets = bm.getBuckets();
 
    var storedValuesArray = [];
@@ -72,7 +71,7 @@ app.post('/api/ping', function (req, res) {
 
    console.log('Ping received from ' + senderId + ', having IP: ' + senderIpAddress);
 
-   //update buckets - insert the senderId
+   //update buckets - insert the node having senderId
    bm.receiveNode(senderId, { ip: senderIpAddress, port: senderPort });
 
    res.send({ senderId: senderId, nodeId: globals.nodeId });
@@ -323,6 +322,7 @@ app.post('/api/wot/takeSensorResponsibility', function (req, res) {
 
    console.log("Generating key for the sensor data...");
 
+   //append the sensor ipaddress, port number and rest api call where the seensor can be accessed.
    globals.sensorDataKey = globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi;
    globals.sensorDataKeyHash = utils.createHash(globals.sensorNodeIpAddress + globals.sensorNodePortNumber + globals.sensorNodeApi);
 
@@ -357,6 +357,7 @@ var result = restClient.ping(globals.initialNodeIpAddress, globals.initialNodePo
    bm.receiveNode(result.nodeId, { ip: result.requestedIpAddress, port: result.requestedPort });
 
    if (result.nodeId != globals.nodeId) {
+      //call findNode on the intial known node - in order to populate the buckets on connection.
       restClient.findNode(globals.initialNodeIpAddress, globals.initialNodePortNumber, result.nodeId, function (data) {
          if (data.result.returnType === constants.GET_CLOSEST_NODE_FOUND_A_BUCKET) {
             //update the buckets with the nodes received from the initial partner

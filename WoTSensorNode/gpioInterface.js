@@ -1,5 +1,4 @@
 ﻿var globals = require('./globals');
-var fs = require('fs')
 
 setInterval(readSensorData, 3000);
 
@@ -14,7 +13,7 @@ if (globals.useGpio) {
 
 exports.writeToPin17 = function (value) {
    if (globals.useGpio) {
-      pin4.write(value, function () { //#E
+      pin4.write(value, function () {
          console.log("Changed PIN 4 state to: " + value);
       });
    }
