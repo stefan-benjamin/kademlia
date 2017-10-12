@@ -14,7 +14,7 @@ FOR /L %%A IN (8081,1,8088) DO (
 
 ECHO.
 ECHO Starting sensor node at port 7070..
-start /MIN "" node WoTSensorNode\app.js 7070 127.0.0.1 8080
+start /MIN "" node WoTSensorNode\app.js 7070 127.0.0.1 8080 0
 
 ECHO.
 ECHO Project is running. Go to localhost:8080 in your browser to visit startup node
