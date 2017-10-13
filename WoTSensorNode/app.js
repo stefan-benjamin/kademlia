@@ -37,8 +37,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 //Call register on the initial known node
+console.log("Trying to register as a WoT sensor on the network. Accessing node on " + globals.initialNodeIpAddress + ", port:" + globals.initialNodePortNumber);
+
 var regResult = restClient.register(globals.initialNodeIpAddress, globals.initialNodePortNumber, function () {
-   console.log("Trying to register as a WoT sensor on the network. Accessing node on " + globals.initialNodeIpAddress + ", port:" + globals.initialNodePortNumber);
+   console.log("Successfully registered on the network.");
 }, function () {
    console.log("Error occurred while registering on the network.");
 });
