@@ -5,7 +5,6 @@ console.log('Starting sensor node...');
 var constants = require('./constants');
 var globals = require('./globals');
 var utils = require('./utils');
-var gpioInterface = require('./gpioInterface');
 var restClient = require('./restClient');
 
 if (process.argv[2] && process.argv[3] && process.argv[4] && process.argv[5]) {
@@ -14,6 +13,8 @@ if (process.argv[2] && process.argv[3] && process.argv[4] && process.argv[5]) {
    globals.initialNodePortNumber = process.argv[4];
    globals.useGpio = process.argv[5];
 }
+
+var gpioInterface = require('./gpioInterface');
 
 var express = require('express');
 const bodyParser = require('body-parser');
